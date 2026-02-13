@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Abre tu Regalo!</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Crimson+Pro:wght@400;600&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(to bottom right, #fffbeb, #fef3c7, #ffedd5);
+            padding: 2rem;
+            overflow: hidden;
+            position: relative;
+            font-family: 'Crimson Pro', serif;
+        }
+
+        /* Decorative background elements */
+        .bg-decoration {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            pointer-events: none;
+            opacity: 0.3;
+        }
+
+        .bg-decoration-1 {
+            top: 5rem;
+            left: 5rem;
+            width: 8rem;
+            height: 8rem;
+            background: #fbbf24;
+            animation: pulse 3s infinite;
+        }
+
+        .bg-decoration-2 {
+            bottom: 5rem;
+            right: 5rem;
+            width: 10rem;
+            height: 10rem;
+            background: #f59e0b;
+            animation: pulse 3s infinite 1s;
+        }
+
+        .bg-decoration-3 {
+            top: 50%;
+            left: 25%;
+            width: 6rem;
+            height: 6rem;
+            background: #fbbf24;
+            animation: pulse 3s infinite 0.5s;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 0.2;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+        @keyframes bounce {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .container {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+        }
+
+        .title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #92400e, #c2410c, #92400e);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            color: #92400e;
+            margin-bottom: 3rem;
+            font-size: 1.125rem;
+        }
+
+        .gift-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        /* Ribbon */
+        .ribbon-vertical {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2.5rem;
+            cursor: grab;
+            z-index: 20;
+            transition: all 0.3s;
+        }
+
+        .ribbon-vertical.dragging {
+            cursor: grabbing;
+            transform: translateX(-50%) scale(1.1);
+        }
+
+        .ribbon-strip {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2.5rem;
+            height: 15rem;
+            background: linear-gradient(to bottom, #dc2626, #ef4444, #dc2626);
+            box-shadow: 0 4px 20px rgba(220, 38, 38, 0.4),
+                inset 2px 0 4px rgba(255, 255, 255, 0.3),
+                inset -2px 0 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .bow {
+            position: absolute;
+            top: -1.25rem;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .bow-left,
+        .bow-right {
+            width: 3.5rem;
+            height: 2.25rem;
+            background: linear-gradient(to bottom right, #ef4444, #dc2626);
+            border-radius: 50%;
+            box-shadow: 0 2px 10px rgba(220, 38, 38, 0.4);
+        }
+
+        .bow-left {
+            transform: rotate(-45deg);
+        }
+
+        .bow-right {
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform: rotate(45deg);
+        }
+
+        .bow-center {
+            position: absolute;
+            top: 0.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 1.75rem;
+            height: 1.75rem;
+            background: linear-gradient(to bottom right, #dc2626, #b91c1c);
+            border-radius: 50%;
+            box-shadow: 0 2px 6px rgba(220, 38, 38, 0.4);
+        }
+
+        .ribbon-horizontal {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2.5rem;
+            background: linear-gradient(to right, #dc2626, #ef4444, #dc2626);
+            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3),
+                inset 0 2px 4px rgba(255, 255, 255, 0.3),
+                inset 0 -2px 4px rgba(0, 0, 0, 0.2);
+            z-index: 10;
+            transition: opacity 0.7s;
+        }
+
+        /* Gift box */
+        .box-lid {
+            position: relative;
+            background: linear-gradient(to bottom right, #fef3c7, #fde68a, #fcd34d);
+            width: 12rem;
+            height: 4rem;
+            border-radius: 1rem 1rem 0 0;
+            box-shadow: 0 10px 40px rgba(180, 83, 9, 0.2),
+                inset 0 -2px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.7s;
+        }
+
+        .box-lid.open {
+            transform: translateY(-200px) rotate(-15deg);
+            opacity: 0;
+        }
+
+        .lid-texture {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.2), transparent);
+            border-radius: 1rem 1rem 0 0;
+        }
+
+        .box-body {
+            background: linear-gradient(to bottom right, #fffbeb, #fef3c7, #fde68a);
+            width: 12rem;
+            height: 10rem;
+            border-radius: 0 0 1rem 1rem;
+            box-shadow: 0 20px 60px rgba(180, 83, 9, 0.25),
+                inset 0 2px 10px rgba(255, 255, 255, 0.4);
+            transition: all 0.5s;
+            position: relative;
+        }
+
+        .box-body.open {
+            transform: scale(0.95);
+            opacity: 0.8;
+        }
+
+        .body-texture {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom right, rgba(255, 255, 255, 0.3), transparent);
+            border-radius: 0 0 1rem 1rem;
+        }
+
+        .box-pattern {
+            position: absolute;
+            inset: 0;
+            opacity: 0.1;
+        }
+
+        .pattern-line {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 7.5rem;
+            height: 1px;
+            background: #92400e;
+        }
+
+        /* Card */
+        .card {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%) scale(0.75);
+            bottom: 0;
+            opacity: 0;
+            transition: all 1s;
+        }
+
+        .card.show {
+            bottom: 3rem;
+            opacity: 1;
+            transform: translateX(-50%) scale(1);
+        }
+
+        .card-inner {
+            background: linear-gradient(to bottom right, #ffffff, #fffbeb);
+            width: 24rem;
+            border-radius: 1rem;
+            padding: 2.5rem;
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.2),
+                0 0 0 1px rgba(180, 83, 9, 0.1);
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            position: relative;
+        }
+
+        .card-heart {
+            position: absolute;
+            top: -1.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(to bottom right, #ef4444, #dc2626);
+            width: 4rem;
+            height: 4rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
+        }
+
+        .heart-icon {
+            width: 2rem;
+            height: 2rem;
+            fill: white;
+        }
+
+        .card-content {
+            margin-top: 1.5rem;
+        }
+
+        .card-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.25rem;
+            font-weight: bold;
+            color: #92400e;
+            text-align: center;
+            margin-bottom: 1.25rem;
+        }
+
+        .card-message {
+            color: #78350f;
+            line-height: 1.75;
+            text-align: center;
+            font-size: 1.125rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .card-signature {
+            color: #b45309;
+            font-size: 1rem;
+            text-align: center;
+            font-style: italic;
+        }
+
+        .card-corner {
+            position: absolute;
+            width: 2rem;
+            height: 2rem;
+            border: 2px solid #fcd34d;
+        }
+
+        .corner-tl {
+            top: 0.75rem;
+            left: 0.75rem;
+            border-right: none;
+            border-bottom: none;
+            border-radius: 0.5rem 0 0 0;
+        }
+
+        .corner-tr {
+            top: 0.75rem;
+            right: 0.75rem;
+            border-left: none;
+            border-bottom: none;
+            border-radius: 0 0.5rem 0 0;
+        }
+
+        .corner-bl {
+            bottom: 0.75rem;
+            left: 0.75rem;
+            border-right: none;
+            border-top: none;
+            border-radius: 0 0 0 0.5rem;
+        }
+
+        .corner-br {
+            bottom: 0.75rem;
+            right: 0.75rem;
+            border-left: none;
+            border-top: none;
+            border-radius: 0 0 0.5rem 0;
+        }
+
+        .instructions {
+            margin-top: 3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            color: #b45309;
+            animation: bounce 2s infinite;
+        }
+
+        .instructions.hidden {
+            display: none;
+        }
+
+        .gift-icon {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="bg-decoration bg-decoration-1"></div>
+    <div class="bg-decoration bg-decoration-2"></div>
+    <div class="bg-decoration bg-decoration-3"></div>
+
+    <div class="container">
+        <h1 class="title" id="title">¡Desliza el listón!</h1>
+        <p class="subtitle" id="subtitle">Arrastra el listón hacia abajo para abrir tu regalo</p>
+
+        <div class="gift-container">
+            <!-- Vertical Ribbon -->
+            <div class="ribbon-vertical" id="ribbon">
+                <div class="ribbon-strip"></div>
+                <div class="bow">
+                    <div class="bow-left"></div>
+                    <div class="bow-right"></div>
+                    <div class="bow-center"></div>
+                </div>
+            </div>
+
+            <!-- Horizontal Ribbon -->
+            <div class="ribbon-horizontal" id="ribbonHorizontal"></div>
+
+            <!-- Box -->
+            <div>
+                <div class="box-lid" id="boxLid">
+                    <div class="lid-texture"></div>
+                </div>
+                <div class="box-body" id="boxBody">
+                    <div class="body-texture"></div>
+                    <div class="box-pattern">
+                        <div class="pattern-line" style="top: 1.25rem;"></div>
+                        <div class="pattern-line" style="top: 3.125rem;"></div>
+                        <div class="pattern-line" style="top: 5rem;"></div>
+                        <div class="pattern-line" style="top: 6.875rem;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card -->
+            <div class="card" id="card">
+                <div class="card-inner">
+                    <div class="card-heart">
+                        <svg class="heart-icon" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                        </svg>
+                    </div>
+                    <div class="card-content">
+                        <h2 class="card-title">¡Para ti!</h2>
+                        <p class="card-message">
+                            Este es un momento especial. Que este regalo traiga alegría a tu día y una sonrisa a tu
+                            corazón.
+                        </p>
+                        <p class="card-signature">Con mucho cariño ❤️</p>
+                    </div>
+                    <div class="card-corner corner-tl"></div>
+                    <div class="card-corner corner-tr"></div>
+                    <div class="card-corner corner-bl"></div>
+                    <div class="card-corner corner-br"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="instructions" id="instructions">
+            <svg class="gift-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="20 12 20 22 4 22 4 12"></polyline>
+                <rect x="2" y="7" width="20" height="5"></rect>
+                <line x1="12" y1="22" x2="12" y2="7"></line>
+                <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path>
+                <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path>
+            </svg>
+            <span>Toca y arrastra el listón ↓</span>
+        </div>
+    </div>
+
+    <script>
+        const ribbon = document.getElementById('ribbon');
+        const ribbonHorizontal = document.getElementById('ribbonHorizontal');
+        const boxLid = document.getElementById('boxLid');
+        const boxBody = document.getElementById('boxBody');
+        const card = document.getElementById('card');
+        const title = document.getElementById('title');
+        const subtitle = document.getElementById('subtitle');
+        const instructions = document.getElementById('instructions');
+
+        let isOpen = false;
+        let isDragging = false;
+        let startY = 0;
+        let ribbonPosition = 0;
+
+        function handleStart(clientY) {
+            if (isOpen) return;
+            isDragging = true;
+            startY = clientY - ribbonPosition;
+            ribbon.classList.add('dragging');
+        }
+
+        function handleMove(clientY) {
+            if (!isDragging || isOpen) return;
+
+            const newPos = clientY - startY;
+            const clampedPos = Math.max(0, Math.min(150, newPos));
+            ribbonPosition = clampedPos;
+
+            ribbon.style.top = `${-25 + clampedPos}px`;
+
+            // Fade out ribbon
+            const opacity = Math.max(0, 1 - (clampedPos / 100));
+            ribbon.style.opacity = opacity;
+            ribbonHorizontal.style.opacity = opacity;
+
+            // Open box when pulled enough
+            if (clampedPos > 100 && !isOpen) {
+                isOpen = true;
+                boxLid.classList.add('open');
+                boxBody.classList.add('open');
+                title.textContent = '¡Sorpresa!';
+                subtitle.textContent = 'Hay un mensaje especial para ti';
+                instructions.classList.add('hidden');
+
+                setTimeout(() => {
+                    card.classList.add('show');
+                }, 600);
+            }
+        }
+
+        function handleEnd() {
+            isDragging = false;
+            ribbon.classList.remove('dragging');
+
+            if (ribbonPosition < 100 && !isOpen) {
+                ribbonPosition = 0;
+                ribbon.style.top = '-25px';
+                ribbon.style.opacity = '1';
+                ribbonHorizontal.style.opacity = '1';
+            }
+        }
+
+        // Mouse events
+        ribbon.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            handleStart(e.clientY);
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            handleMove(e.clientY);
+        });
+
+        document.addEventListener('mouseup', handleEnd);
+
+        // Touch events
+        ribbon.addEventListener('touchstart', (e) => {
+            handleStart(e.touches[0].clientY);
+        });
+
+        document.addEventListener('touchmove', (e) => {
+            if (isDragging) {
+                e.preventDefault();
+                handleMove(e.touches[0].clientY);
+            }
+        }, { passive: false });
+
+        document.addEventListener('touchend', handleEnd);
+    </script>
+</body>
+
+</html>
