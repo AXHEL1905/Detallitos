@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flores para Ti</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-pink: #ff85a2;
+            --secondary-pink: #ffb3c6;
+            --soft-pink: #ffe5ec;
+            --accent-yellow: #fff3b0;
+            --bg-gradient: linear-gradient(135deg, #fff5f5 0%, #ffe3e3 100%);
+            --glass-bg: rgba(255, 255, 255, 0.4);
+            --glass-border: rgba(255, 255, 255, 0.6);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            width: 100vw;
+            background: var(--bg-gradient);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Fondo decorativo con círculos suaves */
+        body::before {
+            content: '';
+            position: absolute;
+            top: -10%;
+            left: -10%;
+            width: 40%;
+            height: 40%;
+            background: radial-gradient(circle, var(--soft-pink) 0%, transparent 70%);
+            z-index: 0;
+            filter: blur(50px);
+        }
+
+        body::after {
+            content: '';
+            position: absolute;
+            bottom: -10%;
+            right: -10%;
+            width: 50%;
+            height: 50%;
+            background: radial-gradient(circle, var(--secondary-pink) 0%, transparent 70%);
+            z-index: 0;
+            filter: blur(60px);
+            opacity: 0.5;
+        }
+
+        #container {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+        }
+
+        .main-button {
+            padding: 20px 45px;
+            font-size: 1.5rem;
+            font-weight: 500;
+            color: #d63384;
+            background: var(--glass-bg);
+            border: 2px solid var(--glass-border);
+            border-radius: 50px;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px 0 rgba(214, 51, 132, 0.2);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            outline: none;
+            position: relative;
+            z-index: 100;
+        }
+
+        .main-button:hover {
+            transform: scale(1.1) translateY(-5px);
+            background: rgba(255, 255, 255, 0.6);
+            box-shadow: 0 15px 45px 0 rgba(214, 51, 132, 0.3);
+        }
+
+        .main-button:active {
+            transform: scale(0.95);
+        }
+
+        /* Flores */
+        .flower {
+            position: absolute;
+            bottom: -100px;
+            pointer-events: none;
+            z-index: 5;
+            filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.05));
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) rotate(0deg) scale(0.5);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+                transform: translateY(-10vh) rotate(15deg) scale(1);
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-120vh) rotate(360deg) scale(1.2);
+                opacity: 0;
+            }
+        }
+
+        @keyframes sway {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            50% {
+                transform: translateX(50px);
+            }
+        }
+
+        .flower-inner {
+            width: 100%;
+            height: 100%;
+            animation: sway var(--sway-duration) ease-in-out infinite;
+        }
+
+        /* SVG styles */
+        .petal {
+            fill: var(--petal-color);
+        }
+
+        .center {
+            fill: var(--center-color);
+        }
+
+        h1 {
+            color: #d63384;
+            margin-bottom: 2rem;
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="container">
+        <h1>Para alguien especial</h1>
+        <button class="main-button" id="flowerBtn">Presiona aquí ✨</button>
+    </div>
+
+    <script>
+        const btn = document.getElementById('flowerBtn');
+        const colors = [
+            { petal: '#ffacc5', center: '#ffeb3b' },
+            { petal: '#ff85a2', center: '#fff176' },
+            { petal: '#fbb1bd', center: '#ffee58' },
+            { petal: '#ffccd5', center: '#fff59d' },
+            { petal: '#ffffff', center: '#ffd54f' }
+        ];
+
+        function createFlower() {
+            const flower = document.createElement('div');
+            flower.className = 'flower';
+
+            const size = Math.random() * (80 - 40) + 40;
+            flower.style.width = `${size}px`;
+            flower.style.height = `${size}px`;
+
+            const left = Math.random() * 100;
+            flower.style.left = `${left}%`;
+
+            const duration = Math.random() * (6 - 3) + 3;
+            flower.style.animation = `floatUp ${duration}s linear forwards`;
+
+            const swayDuration = Math.random() * (4 - 2) + 2;
+            const colorSet = colors[Math.floor(Math.random() * colors.length)];
+
+            flower.innerHTML = `
+                <div class="flower-inner" style="--sway-duration: ${swayDuration}s">
+                    <svg viewBox="0 0 100 100" width="100%" height="100%">
+                        <!-- Petals -->
+                        <circle class="petal" cx="50" cy="30" r="20" style="fill: ${colorSet.petal}" />
+                        <circle class="petal" cx="70" cy="50" r="20" style="fill: ${colorSet.petal}" />
+                        <circle class="petal" cx="50" cy="70" r="20" style="fill: ${colorSet.petal}" />
+                        <circle class="petal" cx="30" cy="50" r="20" style="fill: ${colorSet.petal}" />
+                        <!-- Center -->
+                        <circle class="center" cx="50" cy="50" r="12" style="fill: ${colorSet.center}" />
+                    </svg>
+                </div>
+            `;
+
+            document.body.appendChild(flower);
+
+            // Remove flower after animation finishes
+            setTimeout(() => {
+                flower.remove();
+            }, duration * 1000);
+        }
+
+        btn.addEventListener('click', () => {
+            // Create multiple flowers on click
+            for (let i = 0; i < 30; i++) {
+                setTimeout(() => {
+                    createFlower();
+                }, i * 100);
+            }
+        });
+
+        // Initial subtle drift
+        setInterval(() => {
+            if (Math.random() > 0.7) {
+                createFlower();
+            }
+        }, 2000);
+    </script>
+</body>
+
+</html>
