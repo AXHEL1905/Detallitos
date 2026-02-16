@@ -24,6 +24,7 @@
             padding: 0;
             box-sizing: border-box;
             font-family: 'Outfit', sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -161,6 +162,25 @@
             letter-spacing: 2px;
             text-transform: uppercase;
             opacity: 0.8;
+            transition: all 0.3s ease;
+        }
+
+        /* Responsive adjustments */
+        @media screen and (max-width: 480px) {
+            h1 {
+                font-size: 1.2rem;
+                margin-bottom: 1.5rem;
+                padding: 0 20px;
+            }
+
+            .main-button {
+                padding: 15px 35px;
+                font-size: 1.2rem;
+            }
+
+            .flower {
+                filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.05));
+            }
         }
     </style>
 </head>
