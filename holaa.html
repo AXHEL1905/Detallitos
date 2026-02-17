@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Para Un Ser Especial ✨</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Montserrat:wght@300;500;700&family=Playfair+Display:ital,wght@0,700;1,700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --yellow-bright: #FFD700;
+            --yellow-soft: #FFF4B0;
+            --yellow-dark: #B8860B;
+            --cream: #FFFDD0;
+            --glass: rgba(255, 255, 255, 0.2);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --shadow: 0 8px 32px 0 rgba(184, 134, 11, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--cream);
+            background: linear-gradient(135deg, #FFFDD0 0%, #FFF4B0 100%);
+            font-family: 'Montserrat', sans-serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+            color: #4a4a4a;
+        }
+
+        /* Initial Overlay */
+        #welcome-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--cream);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 1s ease-out, visibility 1s;
+        }
+
+        #welcome-overlay h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3.5rem;
+            color: var(--yellow-dark);
+            margin-bottom: 20px;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        .enter-btn {
+            background: var(--yellow-bright);
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            color: white;
+            font-size: 1.2rem;
+            box-shadow: var(--shadow);
+            transition: 0.3s;
+        }
+
+        /* Falling Petals */
+        #rain-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .petal-rain {
+            position: absolute;
+            background: #FFD700;
+            border-radius: 50% 0 50% 0;
+            opacity: 0.6;
+            animation: fall linear infinite;
+        }
+
+        @keyframes fall {
+            to {
+                transform: translateY(110vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Falling Gerbera with Stem */
+        .falling-gerbera {
+            position: fixed;
+            pointer-events: none;
+            z-index: 100;
+            animation: moveDown linear forwards;
+        }
+
+        @keyframes moveDown {
+            0% {
+                transform: translateY(-150px) rotate(0deg);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(110vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Sections */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 10vw, 4.5rem);
+            color: var(--yellow-dark);
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(1.4rem, 6vw, 2.2rem);
+            color: #634d11;
+        }
+
+        /* Garden */
+        #garden {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .garden-overlay {
+            position: absolute;
+            top: 40px;
+            text-align: center;
+            z-index: 20;
+            pointer-events: none;
+        }
+
+        .garden-overlay h2 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3rem;
+            color: var(--yellow-dark);
+        }
+
+        .gerbera {
+            position: absolute;
+            pointer-events: none;
+            z-index: 5;
+            animation: bloom 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes bloom {
+            from {
+                transform: scale(0);
+                opacity: 0;
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Quote Section (Los mensajitos) */
+        .quote-section {
+            padding: 60px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: white;
+            text-align: center;
+        }
+
+        .quote-box {
+            background: var(--yellow-soft);
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 500px;
+            width: 100%;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .quote-box:active {
+            transform: scale(0.98);
+        }
+
+        #quote-text {
+            font-family: 'Dancing Script', cursive;
+            font-size: 1.8rem;
+            color: var(--yellow-dark);
+            min-height: 60px;
+        }
+
+        /* Letter */
+        .letter-section {
+            padding: 80px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background: white;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            border-radius: 40px;
+            padding: 50px 30px;
+            max-width: 800px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            opacity: 0;
+            transform: translateY(40px);
+            transition: 1s ease;
+        }
+
+        .glass-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .glass-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.2rem;
+            color: var(--yellow-dark);
+            margin-bottom: 25px;
+        }
+
+        /* Secret Message */
+        .secret-box {
+            margin-top: 40px;
+            background: var(--yellow-soft);
+            padding: 30px;
+            border-radius: 30px;
+            text-align: center;
+            border: 2px dashed var(--yellow-dark);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .scrape-area {
+            margin-top: 20px;
+            height: 60px;
+            background: var(--yellow-dark);
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            position: relative;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        .scrape-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #d4d4d4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #777;
+            transition: opacity 0.6s;
+        }
+
+        /* Widgets */
+        #butterfly {
+            position: fixed;
+            width: 45px;
+            height: 45px;
+            z-index: 1000;
+            pointer-events: none;
+            display: none;
+        }
+
+        .butterfly-wing {
+            fill: #FFD700;
+            stroke: #B8860B;
+            stroke-width: 1;
+            animation: flap 0.2s infinite alternate;
+            transform-origin: center;
+        }
+
+        @keyframes flap {
+            from {
+                transform: scaleX(1);
+            }
+
+            to {
+                transform: scaleX(0.3);
+            }
+        }
+
+        #music-flower-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 70px;
+            height: 70px;
+            z-index: 1100;
+            cursor: pointer;
+            display: none;
+        }
+
+        #music-flower-toggle.playing {
+            animation: spin 6s linear infinite;
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        #player-container {
+            position: fixed;
+            top: -100px;
+            width: 1px;
+            height: 1px;
+            opacity: 0.01;
+        }
+
+        .wish-btn {
+            background: white;
+            border: 2px solid var(--yellow-bright);
+            padding: 12px 25px;
+            border-radius: 30px;
+            margin-top: 20px;
+            color: var(--yellow-dark);
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            20%,
+            50%,
+            80%,
+            100% {
+                transform: translateY(0);
+            }
+
+            40% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .scroll-down {
+            animation: bounce 2s infinite;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="welcome-overlay">
+        <h1>Para alguien especial ✨</h1>
+        <button class="enter-btn" id="startBtn">ENTRAR AL REGALO</button>
+        <p style="margin-top: 20px; font-size: 0.9rem; color: #888;">(Asegurate de tener audio 🎵)</p>
+    </div>
+
+    <div id="rain-container"></div>
+    <div id="player-container"></div>
+    <div id="butterfly">
+        <svg viewBox="0 0 100 100" width="100%" height="100%">
+            <path class="butterfly-wing" d="M50 50 Q70 10 90 50 Q70 90 50 50 Z" />
+            <path class="butterfly-wing" d="M50 50 Q30 10 10 50 Q30 90 50 50 Z" />
+            <line x1="50" y1="30" x2="50" y2="70" stroke="#333" stroke-width="2" />
+        </svg>
+    </div>
+
+    <div id="music-flower-toggle">
+        <svg viewBox="0 0 100 100" width="100%" height="100%" id="music-svg-content"></svg>
+    </div>
+
+    <section class="hero">
+        <h1>Holaaaaa ✨</h1>
+        <p>Baja un poquito...</p>
+        <div class="scroll-down">
+            <svg width="30" height="30" viewBox="0 0 24 24" fill="var(--yellow-dark)">
+                <path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z" />
+            </svg>
+        </div>
+    </section>
+
+    <section id="garden">
+        <div class="garden-overlay">
+            <h2>Un jardín infinito</h2>
+            <p style="font-size: 0.8rem; color: #8b732d;">TOCA LA PANTALLA</p>
+        </div>
+    </section>
+
+    <!-- Sección de mensajitos -->
+    <section class="quote-section">
+        <p style="margin-bottom: 20px; color: #888; font-size: 0.9rem;">(Toca el recuadro para otro mensaje)</p>
+        <div class="quote-box" onclick="nextQuote()">
+            <div id="quote-text">"Eres mi sol cada mañana. ☀️"</div>
+        </div>
+    </section>
+
+    <section class="letter-section">
+        <div class="glass-card" id="loveLetter">
+            <h3>Eres increíble...</h3>
+            <p>Quería hacer algo que brillara tanto como tú. Sé que el amarillo es tu color y las gerberas tus flores
+                favoritas, así que creé este espacio donde nunca dejan de florecer.</p>
+            <p>Cada detalle aquí fue pensado para recordarte que eres increíble. Desde la mariposa que te sigue
+                hasta cada flor que nace con tu toque.</p>
+            <p
+                style="font-family: 'Dancing Script', cursive; font-size: 2.2rem; margin-top: 30px; color: var(--yellow-dark);">
+                Con mucho cariño ✨</p>
+        </div>
+
+        <div class="secret-box">
+            <h4>Tengo un secreto...</h4>
+            <div class="scrape-area">
+                <span>¡Me gustan mucho tus ojitos! ❤️</span>
+                <div class="scrape-overlay" onclick="this.style.opacity='0'">TOCA AQUÍ</div>
+            </div>
+            <button class="wish-btn" id="wishBtn">¡Lanzar Lluvia de Flores! 🌟</button>
+        </div>
+    </section>
+
+    <script>
+        // 1. Setup & Music
+        const startBtn = document.getElementById('startBtn');
+        const welcome = document.getElementById('welcome-overlay');
+        const musicToggle = document.getElementById('music-flower-toggle');
+        const butterfly = document.getElementById('butterfly');
+
+        function createGerberaSVG(targetId) {
+            const gradId = 'g' + Math.random().toString(36).substr(2, 5);
+            let petals = `<defs><radialGradient id="${gradId}"><stop offset="0%" stop-color="#FFEB3B"/><stop offset="100%" stop-color="#FBC02D"/></radialGradient></defs>`;
+            for (let i = 0; i < 36; i++) {
+                petals += `<ellipse fill="url(#${gradId})" cx="50" cy="50" rx="48" ry="4" transform="rotate(${i * 10} 50 50)" stroke="#F9A825" stroke-width="0.1"/>`;
+            }
+            petals += `<circle fill="#5D4037" cx="50" cy="50" r="10"/><circle fill="#3E2723" cx="50" cy="50" r="6"/>`;
+            document.getElementById(targetId).innerHTML = petals;
+        }
+
+        startBtn.onclick = () => {
+            welcome.style.opacity = '0';
+            setTimeout(() => {
+                welcome.style.visibility = 'hidden';
+                musicToggle.style.display = 'block';
+                musicToggle.classList.add('playing');
+                butterfly.style.display = 'block';
+            }, 1000);
+
+            document.getElementById('player-container').innerHTML = `
+                <iframe id="ytIframe" width="1" height="1" 
+                src="https://www.youtube.com/embed/mIWKd9QOrN4?enablejsapi=1&autoplay=1&loop=1&playlist=mIWKd9QOrN4" 
+                frameborder="0" allow="autoplay; encrypted-media"></iframe>`;
+
+            createGerberaSVG('music-svg-content');
+        };
+
+        let isPlaying = true;
+        musicToggle.onclick = () => {
+            const iframe = document.getElementById('ytIframe').contentWindow;
+            isPlaying ? iframe.postMessage('{"event":"command","func":"pauseVideo","args":""}', '*') : iframe.postMessage('{"event":"command","func":"playVideo","args":""}', '*');
+            musicToggle.classList.toggle('playing');
+            isPlaying = !isPlaying;
+        };
+
+        // 2. Butterfly & Interaction
+        function moveButterfly(x, y) {
+            if (butterfly.style.display === 'block') {
+                butterfly.style.left = (x + 10) + 'px';
+                butterfly.style.top = (y - 40) + 'px';
+            }
+        }
+
+        document.addEventListener('mousemove', (e) => moveButterfly(e.clientX, e.clientY));
+        document.addEventListener('touchmove', (e) => moveButterfly(e.touches[0].clientX, e.touches[0].clientY), { passive: true });
+
+        // 3. Garden logic
+        const garden = document.getElementById('garden');
+        const MAX_FLOWERS = 30; // Evita lentitud
+        let flowerCount = 0;
+
+        function createGerbera(x, y, big = false, autoRemove = false) {
+            const gerbera = document.createElement('div');
+            gerbera.className = 'gerbera';
+            const size = big ? (Math.random() * 80 + 100) : (Math.random() * 60 + 70);
+            gerbera.style.width = size + 'px';
+            gerbera.style.height = size + 'px';
+            gerbera.style.left = (x - size / 2) + 'px';
+            gerbera.style.top = (y - size / 2) + 'px';
+
+            const gradId = 'g' + Math.random().toString(36).substr(2, 5);
+            let petals = `<defs><radialGradient id="${gradId}"><stop offset="0%" stop-color="#FFEB3B"/><stop offset="100%" stop-color="#FBC02D"/></radialGradient></defs>`;
+            for (let i = 0; i < 36; i++) {
+                petals += `<ellipse fill="url(#${gradId})" cx="50" cy="50" rx="48" ry="4" transform="rotate(${i * 10} 50 50)" stroke="#F9A825" stroke-width="0.1"/>`;
+            }
+            gerbera.innerHTML = `<svg viewBox="0 0 100 100">${petals}<circle fill="#5D4037" cx="50" cy="50" r="10"/><circle fill="#3E2723" cx="50" cy="50" r="6"/></svg>`;
+            garden.appendChild(gerbera);
+            gerbera.style.transform = `rotate(${Math.random() * 360}deg)`;
+
+            flowerCount++;
+
+            // Si hay demasiadas, quitar la más vieja (no la que acabamos de poner)
+            if (flowerCount > MAX_FLOWERS && !autoRemove) {
+                const first = garden.querySelector('.gerbera');
+                if (first) { first.remove(); flowerCount--; }
+            }
+
+            if (autoRemove) {
+                setTimeout(() => { gerbera.style.opacity = '0'; setTimeout(() => { gerbera.remove(); flowerCount--; }, 1000); }, 3000);
+            }
+        }
+
+        garden.onclick = (e) => {
+            const r = garden.getBoundingClientRect();
+            createGerbera(e.clientX - r.left, e.clientY - r.top);
+        };
+        garden.ontouchstart = (e) => {
+            const r = garden.getBoundingClientRect();
+            createGerbera(e.touches[0].clientX - r.left, e.touches[0].clientY - r.top);
+        };
+
+        // 4. Lluvia de Flores optimizada (Cayendo con tallo)
+        function createFallingGerbera() {
+            const f = document.createElement('div');
+            f.className = 'falling-gerbera';
+
+            const x = Math.random() * window.innerWidth;
+            const duration = Math.random() * 3 + 4;
+            const size = Math.random() * 40 + 40;
+
+            f.style.left = x + 'px';
+            f.style.top = '-150px';
+            f.style.width = size + 'px';
+            f.style.height = (size * 2) + 'px'; // Espacio para el tallo
+            f.style.animationDuration = duration + 's';
+
+            // Colores: Más probabilidad de amarillo
+            const colors = [
+                { p: 0.7, c1: "#FFEB3B", c2: "#FBC02D" }, // Amarillo
+                { p: 0.1, c1: "#F06292", c2: "#D81B60" }, // Rosa
+                { p: 0.1, c1: "#FF9800", c2: "#E65100" }, // Naranja
+                { p: 0.1, c1: "#FFFFFF", c2: "#E0E0E0" }  // Blanco
+            ];
+
+            let rand = Math.random();
+            let selected = colors[0];
+            let sum = 0;
+            for (let c of colors) {
+                sum += c.p;
+                if (rand <= sum) { selected = c; break; }
+            }
+
+            const gradId = 'g' + Math.random().toString(36).substr(2, 5);
+            f.innerHTML = `
+                <svg viewBox="0 0 100 200" width="100%" height="100%">
+                    <defs>
+                        <radialGradient id="${gradId}">
+                            <stop offset="0%" stop-color="${selected.c1}"/>
+                            <stop offset="100%" stop-color="${selected.c2}"/>
+                        </radialGradient>
+                    </defs>
+                    <!-- Tallo -->
+                    <path d="M50 50 Q60 120 50 200" stroke="#4CAF50" stroke-width="4" fill="none" />
+                    <!-- Flor -->
+                    <g transform="translate(0, 0)">
+                        ${(function () {
+                    let petals = '';
+                    for (let i = 0; i < 36; i++) {
+                        petals += `<ellipse fill="url(#${gradId})" cx="50" cy="50" rx="45" ry="5" transform="rotate(${i * 10} 50 50)" stroke="#B8860B" stroke-width="0.1"/>`;
+                    }
+                    return petals;
+                })()}
+                        <circle fill="#5D4037" cx="50" cy="50" r="10"/>
+                        <circle fill="#3E2723" cx="50" cy="50" r="6"/>
+                    </g>
+                </svg>
+            `;
+
+            document.body.appendChild(f);
+            setTimeout(() => f.remove(), duration * 1000);
+        }
+
+        document.getElementById('wishBtn').onclick = () => {
+            for (let i = 0; i < 30; i++) {
+                setTimeout(createFallingGerbera, i * 200);
+            }
+        };
+
+        // 5. Mensajitos
+        const quotes = ["Eres alguien increíble. ☀️", "Tu sonrisa es mi color favorito. 🌻", "Gracias por ser como eres. ✨", "Simplemente única.", "Eres mi persona favorita."];
+        let qi = 0;
+        function nextQuote() {
+            qi = (qi + 1) % quotes.length;
+            document.getElementById('quote-text').innerText = quotes[qi];
+        }
+
+        // 6. Rain
+        (function rain() {
+            const c = document.getElementById('rain-container');
+            setInterval(() => {
+                const p = document.createElement('div');
+                p.className = 'petal-rain';
+                const s = Math.random() * 10 + 10;
+                p.style.width = s + 'px'; p.style.height = (s / 2) + 'px';
+                p.style.left = Math.random() * 100 + '%'; p.style.top = '-20px';
+                p.style.animationDuration = (Math.random() * 3 + 4) + 's';
+                c.appendChild(p);
+                setTimeout(() => p.remove(), 7000);
+            }, 300);
+        })();
+
+        window.onscroll = () => {
+            const card = document.getElementById('loveLetter');
+            if (card.getBoundingClientRect().top < window.innerHeight * 0.8) card.classList.add('visible');
+        };
+    </script>
+</body>
+
+</html>
