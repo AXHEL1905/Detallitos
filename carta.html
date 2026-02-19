@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Una Carta para Ti</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Montserrat:wght@300;400&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #ff4d6d;
+            --secondary-color: #ff758f;
+            --envelope-color: #fff0f3;
+            --envelope-flap: #ffb3c1;
+            --letter-bg: #ffffff;
+            --text-color: #590d22;
+            --bg-gradient: linear-gradient(135deg, #ffafbd 0%, #ffc3a0 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--bg-gradient);
+            font-family: 'Montserrat', sans-serif;
+            overflow: hidden;
+        }
+
+        /* Floating Flowers Background */
+        .hearts {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .flower {
+            position: absolute;
+            display: inline-block;
+            animation: float 10s infinite linear;
+        }
+
+        .flower::before,
+        .flower::after {
+            content: "";
+            position: absolute;
+            background: inherit;
+            border-radius: 50%;
+        }
+
+        /* Flower shape */
+        .flower {
+            width: 15px;
+            height: 15px;
+            background: #ffecb3;
+            /* Center */
+            border-radius: 50%;
+        }
+
+        .flower-petal {
+            position: absolute;
+            width: 15px;
+            height: 15px;
+            border-radius: 50% 50% 0 50%;
+            background: inherit;
+            opacity: 0.8;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(110vh) rotate(0deg) scale(0);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            90% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-10vh) rotate(360deg) scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        /* Envelope Container */
+        .container {
+            position: relative;
+            z-index: 10;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            width: 300px;
+            height: 200px;
+        }
+
+        .container:hover {
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                transform: scale(0.8);
+            }
+
+            .container:hover {
+                transform: scale(0.85);
+            }
+        }
+
+        .envelope-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: var(--envelope-color);
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        .envelope-wrapper::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 3;
+            border-top: 100px solid transparent;
+            border-left: 150px solid var(--envelope-flap);
+            border-bottom: 100px solid var(--envelope-flap);
+            border-right: 150px solid transparent;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+
+        .envelope-wrapper::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 3;
+            border-top: 100px solid transparent;
+            border-left: 150px solid transparent;
+            border-bottom: 100px solid #ffccd5;
+            border-right: 150px solid #ffccd5;
+            border-bottom-left-radius: 10px;
+            border-bottom-right-radius: 10px;
+        }
+
+        .envelope-flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 150px solid transparent;
+            border-right: 150px solid transparent;
+            border-top: 110px solid var(--envelope-flap);
+            transform-origin: top;
+            transition: transform 0.6s ease-in-out;
+            z-index: 4;
+        }
+
+        /* Letter Styling */
+        .letter {
+            position: absolute;
+            bottom: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            height: 95%;
+            background: var(--letter-bg);
+            padding: 30px 20px;
+            transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 2;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            text-align: center;
+            overflow-y: auto;
+        }
+
+        .letter-content {
+            font-family: 'Dancing Script', cursive;
+            color: var(--text-color);
+            font-size: 1.3rem;
+            line-height: 1.4;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            transition-delay: 0.8s;
+            width: 100%;
+        }
+
+        .letter-content h2 {
+            margin-bottom: 15px;
+            font-size: 1.8rem;
+            color: var(--primary-color);
+        }
+
+        /* Interaction States */
+        .container.open .envelope-flap {
+            transform: rotateX(180deg);
+            z-index: 1;
+        }
+
+        .container.open .letter {
+            transform: translate(-50%, -15%) scale(1.1);
+            height: 350px;
+            z-index: 10;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+            margin-bottom: 0;
+        }
+
+        .container.open .letter-content {
+            opacity: 1;
+        }
+
+        .instruction {
+            position: absolute;
+            bottom: -60px;
+            width: 100%;
+            text-align: center;
+            color: white;
+            font-weight: 500;
+            letter-spacing: 1px;
+            animation: pulse 2s infinite;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes pulse {
+            0% {
+                opacity: 0.6;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0.6;
+            }
+        }
+
+        /* Heart on flap */
+        .flap-heart {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            color: var(--primary-color);
+            font-size: 2rem;
+            transition: opacity 0.3s;
+        }
+
+        .container.open .flap-heart {
+            opacity: 0;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                transform: scale(0.85);
+            }
+
+            .container.open .letter {
+                transform: translate(-50%, -10%) scale(1.05);
+                height: 380px;
+                width: 110%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="hearts" id="hearts-container"></div>
+
+    <div class="container" id="envelope-container">
+        <div class="envelope-wrapper">
+            <div class="envelope-flap"></div>
+            <div class="letter">
+                <div class="letter-content">
+                    <h2>Para ti...</h2>
+                    <p>Hoy quería decirte algo especial.</p>
+                    <p>Eres una persona increíble que le echa muchas ganitas a todo lo que se propone.</p>
+                    <p>Espero que este pequeño detalle te saque una sonrisa hoy y que sigas cumpliendo tus metas.</p>
+                    <p style="margin-top: 20px; font-weight: bold;">Con cariño, para alguien especial.</p>
+                </div>
+            </div>
+            <div class="flap-heart">❤️</div>
+        </div>
+        <div class="instruction">Toca el sobre para abrirlo</div>
+    </div>
+
+    <script>
+        const container = document.getElementById('envelope-container');
+        const heartsContainer = document.getElementById('hearts-container');
+
+        // Toggle open state
+        container.addEventListener('click', () => {
+            container.classList.toggle('open');
+        });
+
+        // Generate floating flowers
+        function createFlower() {
+            const flower = document.createElement('div');
+            flower.classList.add('flower');
+
+            const colors = ['#ff85a1', '#ffb3c1', '#ffc8dd', '#ffafcc', '#fb6f92'];
+            const randomColor = colors[Math.floor(Math.random() * colors.length)];
+
+            flower.style.background = '#fff4cc'; // Center color
+            flower.style.left = Math.random() * 100 + 'vw';
+            flower.style.animationDuration = Math.random() * 5 + 7 + 's';
+
+            // Add petals
+            for (let i = 0; i < 5; i++) {
+                const petal = document.createElement('div');
+                petal.classList.add('flower-petal');
+                petal.style.background = randomColor;
+                petal.style.transform = `rotate(${i * 72}deg) translate(8px)`;
+                flower.appendChild(petal);
+            }
+
+            heartsContainer.appendChild(flower);
+
+            setTimeout(() => {
+                flower.remove();
+            }, 12000);
+        }
+
+        setInterval(createFlower, 500);
+    </script>
+</body>
+
+</html>
