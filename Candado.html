@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Un Regalito</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Montserrat:wght@300;400;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #ff477e;
+            --secondary: #ff708d;
+            --accent: #ff85a1;
+            --bg: #fff0f3;
+            --envelope: #ffffff;
+            --flap: #fce4ec;
+            --text: #4a0e0e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle at center, #ff85a1, #ff477e);
+            font-family: 'Montserrat', sans-serif;
+            overflow: hidden;
+            perspective: 1000px;
+        }
+
+        /* Particles Layer */
+        #particles-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        /* Secret Compartment Area */
+        #secret-trigger {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            border-radius: 12px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            opacity: 0;
+            transform: scale(0.5);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 50;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        #secret-trigger.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        #secret-trigger i {
+            font-size: 24px;
+            filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.1));
+        }
+
+        /* Secret Arrow Hint */
+        .secret-arrow {
+            position: absolute;
+            top: 75px;
+            left: 30px;
+            color: white;
+            font-size: 1.5rem;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            z-index: 51;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            font-weight: bold;
+        }
+
+        .secret-arrow.visible {
+            opacity: 1;
+            animation: arrow-pointing 1.5s infinite ease-in-out;
+        }
+
+        .secret-arrow span {
+            font-size: 0.8rem;
+            margin-top: -5px;
+            white-space: nowrap;
+        }
+
+        @keyframes arrow-pointing {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(-45deg);
+            }
+
+            50% {
+                transform: translateY(-10px) rotate(-45deg);
+            }
+        }
+
+        /* Envelope */
+        .envelope-container {
+            position: relative;
+            width: 350px;
+            height: 240px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            z-index: 10;
+        }
+
+        .envelope-container:hover {
+            transform: scale(1.02) translateY(-5px);
+        }
+
+        .envelope {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            background: var(--envelope);
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            transform-style: preserve-3d;
+        }
+
+        .envelope::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                linear-gradient(45deg, var(--flap) 25%, transparent 25%) -50px 0,
+                linear-gradient(-45deg, var(--flap) 25%, transparent 25%) -50px 0,
+                linear-gradient(45deg, transparent 75%, var(--flap) 75%),
+                linear-gradient(-45deg, transparent 75%, var(--flap) 75%);
+            background-size: 100px 100px;
+            opacity: 0.1;
+            border-radius: 0 0 15px 15px;
+        }
+
+        .flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-left: 175px solid transparent;
+            border-right: 175px solid transparent;
+            border-top: 130px solid var(--flap);
+            transform-origin: top;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 5;
+            filter: drop-shadow(0 5px 5px rgba(0, 0, 0, 0.1));
+        }
+
+        .pocket {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--envelope);
+            border-left: 175px solid transparent;
+            border-right: 175px solid transparent;
+            border-bottom: 120px solid #f8bbd0;
+            border-radius: 0 0 15px 15px;
+            z-index: 3;
+        }
+
+        .pocket::after {
+            content: '';
+            position: absolute;
+            bottom: -120px;
+            left: -175px;
+            width: 350px;
+            height: 240px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.05) 100%);
+            border-radius: 0 0 15px 15px;
+        }
+
+        .wax-seal {
+            position: absolute;
+            top: 110px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 60px;
+            background: #d81b60;
+            border-radius: 50%;
+            z-index: 6;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3), inset 0 0 10px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.4s ease;
+        }
+
+        .wax-seal::before {
+            content: '❤';
+            color: #ad1457;
+            font-size: 30px;
+            text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        /* Animations */
+        .envelope-container.open .flap {
+            transform: rotateX(180deg);
+            z-index: 1;
+        }
+
+        .envelope-container.open .wax-seal {
+            opacity: 0;
+            transform: translateX(-50%) scale(1.5);
+            pointer-events: none;
+        }
+
+        .envelope-container.explode {
+            animation: explode 0.5s forwards;
+        }
+
+        @keyframes explode {
+            0% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(0);
+                opacity: 0;
+            }
+        }
+
+        /* Letter */
+        .letter {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            width: 320px;
+            max-height: 450px;
+            background: white;
+            padding: 40px 30px;
+            border-radius: 5px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+            z-index: 20;
+            text-align: center;
+            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            overflow-y: auto;
+        }
+
+        .letter.visible {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .letter h1 {
+            font-family: 'Dancing Script', cursive;
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 2.2rem;
+        }
+
+        .letter p {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: var(--text);
+            margin-bottom: 15px;
+        }
+
+        /* Scroll Hint */
+        .scroll-hint {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--primary);
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 21;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 5px 10px;
+            border-radius: 15px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .scroll-hint span {
+            font-size: 1.2rem;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            20%,
+            50%,
+            80%,
+            100% {
+                transform: translateY(0);
+            }
+
+            40% {
+                transform: translateY(-5px);
+            }
+
+            60% {
+                transform: translateY(-3px);
+            }
+        }
+
+        .letter .close-btn {
+            margin-top: 20px;
+            padding: 10px 25px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        /* Lock / PIN Overlay */
+        .pin-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 200;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s;
+        }
+
+        .pin-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .pin-container {
+            background: white;
+            padding: 30px;
+            border-radius: 25px;
+            text-align: center;
+            width: 300px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+        }
+
+        .lock-icon {
+            font-size: 50px;
+            margin-bottom: 20px;
+            color: #4a4a4a;
+        }
+
+        .pin-display {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .pin-dot {
+            width: 15px;
+            height: 15px;
+            border: 2px solid #ccc;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+
+        .pin-dot.filled {
+            background: var(--primary);
+            border-color: var(--primary);
+            transform: scale(1.2);
+        }
+
+        .keypad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .key {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .key:active {
+            background: #e0e0e0;
+            transform: scale(0.9);
+        }
+
+        .key.clear {
+            grid-column: span 1;
+            background: #ffebee;
+            color: #f44336;
+        }
+
+        /* Personal Letter */
+        #personal-letter {
+            background: #fff9fa;
+            border: 2px dashed var(--accent);
+        }
+
+        .personal-ribbon {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 10px;
+            background: repeating-linear-gradient(45deg,
+                    var(--primary),
+                    var(--primary) 10px,
+                    var(--secondary) 10px,
+                    var(--secondary) 20px);
+        }
+
+        /* Instruction text */
+        .tip {
+            position: absolute;
+            bottom: 40px;
+            color: white;
+            font-weight: 500;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            width: 100%;
+        }
+
+        /* Floating elements */
+        .decor {
+            position: absolute;
+            pointer-events: none;
+            z-index: 1;
+        }
+    </style>
+</head>
+
+<body>
+
+    <canvas id="particles-canvas"></canvas>
+
+    <div id="secret-trigger" title="Compartimiento Secreto">
+        <span>🔒</span>
+    </div>
+
+    <div class="secret-arrow" id="secret-arrow">
+        ↑
+        <span>¡Secreto aquí!</span>
+    </div>
+
+    <div class="envelope-container" id="env-container">
+        <div class="envelope">
+            <div class="flap"></div>
+            <div class="pocket"></div>
+            <div class="wax-seal"></div>
+        </div>
+    </div>
+
+    <div class="letter" id="public-letter">
+        <h1>Para tí...</h1>
+        <p>Hoy quería enviarte algo más que un simple mensaje. Quería agradecerte por el apoyo que me has dado en todo
+            este tiempo.</p>
+        <p>Decirte que me agrada muchísimo tu forma de ser, tu forma de pensar y tu forma de expresarte.</p>
+        <p>Espero que este detalle te saque una sonrisa y que te ayude a saber lo especial que eres. ¡Gracias por ser
+            tú!</p>
+        <button class="close-btn" onclick="closeLetter('public-letter')">Cerrar</button>
+        <div class="scroll-hint" id="hint-public">
+            Desliza para leer más
+            <span>↓</span>
+        </div>
+    </div>
+
+    <div class="letter" id="personal-letter">
+        <div class="personal-ribbon"></div>
+        <h1>Algo más Personal...</h1>
+        <p>¡Lograste entrar al compartimiento secreto! ❤️</p>
+        <p>Esto es para tus ojos solamente. No hay palabras suficientes para describir cómo me haces sentir, pero quiero
+            intentarlo...</p>
+        <p>Se que no es mucho tiempo el que hemos vuelto a hablar, pero me has hecho sentir muy especial y me has dado
+            mucho
+            apoyo.
+        </p>
+        <p>Y solo decir que a pesar de todo lo que pase nunca me dejaste de gustar y siempre e querido que seas tu la
+            persona con la que quiero estar.
+        </p>
+        <p>Te quiero muchísimo, hoy, mañana y siempre. ✨</p>
+        <button class="close-btn" onclick="closeLetter('personal-letter')">Guardar en el corazón</button>
+        <div class="scroll-hint" id="hint-personal">
+            Desliza para leer más
+            <span>↓</span>
+        </div>
+    </div>
+
+    <div class="pin-overlay" id="pin-overlay">
+        <div class="pin-container">
+            <div class="lock-icon">🔒</div>
+            <p style="margin-bottom: 15px; color: #666;">Introduce el código secreto</p>
+            <div class="pin-display">
+                <div class="pin-dot"></div>
+                <div class="pin-dot"></div>
+                <div class="pin-dot"></div>
+                <div class="pin-dot"></div>
+            </div>
+            <div class="keypad">
+                <div class="key" onclick="pressKey('1')">1</div>
+                <div class="key" onclick="pressKey('2')">2</div>
+                <div class="key" onclick="pressKey('3')">3</div>
+                <div class="key" onclick="pressKey('4')">4</div>
+                <div class="key" onclick="pressKey('5')">5</div>
+                <div class="key" onclick="pressKey('6')">6</div>
+                <div class="key" onclick="pressKey('7')">7</div>
+                <div class="key" onclick="pressKey('8')">8</div>
+                <div class="key" onclick="pressKey('9')">9</div>
+                <div class="key clear" onclick="clearPin()">C</div>
+                <div class="key" onclick="pressKey('0')">0</div>
+                <div class="key" onclick="checkPin()" style="background: var(--primary); color: white;">✓</div>
+            </div>
+            <button onclick="togglePinOverlay(false)"
+                style="margin-top: 20px; border: none; background: none; color: #999; cursor: pointer;">Cancelar</button>
+        </div>
+    </div>
+
+    <div class="tip" id="instruction">Toca el sobre para ver la sorpresa</div>
+
+    <script>
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        const envContainer = document.getElementById('env-container');
+        const secretTrigger = document.getElementById('secret-trigger');
+        const publicLetter = document.getElementById('public-letter');
+        const personalLetter = document.getElementById('personal-letter');
+        const pinOverlay = document.getElementById('pin-overlay');
+        const instruction = document.getElementById('instruction');
+
+        let particles = [];
+        let canvasWidth, canvasHeight;
+        let currentPin = '';
+        const _0x1a2 = [49, 50, 50, 51];
+        const getSecureKey = () => _0x1a2.map(c => String.fromCharCode(c)).join('');
+
+        function resizeCanvas() {
+            canvasWidth = canvas.width = window.innerWidth;
+            canvasHeight = canvas.height = window.innerHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor(x, y, isFlower = false) {
+                this.x = x;
+                this.y = y;
+                this.size = Math.random() * 8 + 4;
+                this.speedX = (Math.random() - 0.5) * 15;
+                this.speedY = (Math.random() - 0.5) * 15 - 5;
+                this.gravity = 0.2;
+                this.color = isFlower ? `hsl(${Math.random() * 30 + 330}, 100%, 70%)` : `hsl(${Math.random() * 20 + 340}, 100%, 60%)`;
+                this.rotation = Math.random() * 360;
+                this.rotationSpeed = (Math.random() - 0.5) * 10;
+                this.life = 100;
+                this.isFlower = isFlower;
+            }
+
+            update() {
+                this.speedY += this.gravity;
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.rotation += this.rotationSpeed;
+                this.life -= 0.8;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.rotation * Math.PI / 180);
+                ctx.fillStyle = this.color;
+                ctx.globalAlpha = this.life / 100;
+
+                if (this.isFlower) {
+                    // Draw a simple 5-petal flower
+                    for (let i = 0; i < 5; i++) {
+                        ctx.beginPath();
+                        ctx.rotate((72 * Math.PI) / 180);
+                        ctx.ellipse(this.size / 2, 0, this.size, this.size / 2, 0, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                    ctx.fillStyle = '#fff';
+                    ctx.beginPath();
+                    ctx.arc(0, 0, this.size / 3, 0, Math.PI * 2);
+                    ctx.fill();
+                } else {
+                    // Draw a heart
+                    ctx.beginPath();
+                    ctx.moveTo(0, 0);
+                    ctx.bezierCurveTo(-this.size, -this.size, -this.size * 2, this.size / 3, 0, this.size);
+                    ctx.bezierCurveTo(this.size * 2, this.size / 3, this.size, -this.size, 0, 0);
+                    ctx.fill();
+                }
+                ctx.restore();
+            }
+        }
+
+        function createExplosion(x, y) {
+            for (let i = 0; i < 150; i++) {
+                particles.push(new Particle(x, y, Math.random() > 0.3));
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+                if (particles[i].life <= 0) {
+                    particles.splice(i, 1);
+                    i--;
+                }
+            }
+            requestAnimationFrame(animate);
+        }
+        animate();
+
+        // Main Interaction
+        envContainer.addEventListener('click', function () {
+            if (this.classList.contains('open')) return;
+
+            this.classList.add('open');
+            instruction.style.opacity = '0';
+
+            setTimeout(() => {
+                this.classList.add('explode');
+                const rect = this.getBoundingClientRect();
+                createExplosion(rect.left + rect.width / 2, rect.top + rect.height / 2);
+
+                setTimeout(() => {
+                    publicLetter.classList.add('visible');
+                    secretTrigger.classList.add('visible');
+                    document.getElementById('secret-arrow').classList.add('visible');
+                    this.style.display = 'none';
+                    checkScrollNeed('public-letter', 'hint-public');
+                }, 500);
+            }, 1200);
+        });
+
+        function checkScrollNeed(letterId, hintId) {
+            const letter = document.getElementById(letterId);
+            const hint = document.getElementById(hintId);
+
+            // Wait for render
+            setTimeout(() => {
+                if (letter.scrollHeight > letter.clientHeight) {
+                    hint.style.opacity = '1';
+                } else {
+                    hint.style.opacity = '0';
+                }
+            }, 100);
+
+            letter.addEventListener('scroll', () => {
+                if (letter.scrollTop > 20) {
+                    hint.style.opacity = '0';
+                    hint.style.pointerEvents = 'none';
+                } else {
+                    hint.style.opacity = '1';
+                }
+            });
+        }
+
+        function closeLetter(id) {
+            document.getElementById(id).classList.remove('visible');
+        }
+
+        // Secret Compartment logic
+        secretTrigger.addEventListener('click', () => {
+            togglePinOverlay(true);
+            document.getElementById('secret-arrow').classList.remove('visible');
+        });
+
+        function togglePinOverlay(show) {
+            pinOverlay.classList.toggle('active', show);
+            if (!show) clearPin();
+        }
+
+        function pressKey(num) {
+            if (currentPin.length < 4) {
+                currentPin += num;
+                updatePinDots();
+            }
+        }
+
+        function clearPin() {
+            currentPin = '';
+            updatePinDots();
+        }
+
+        function updatePinDots() {
+            const dots = document.querySelectorAll('.pin-dot');
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('filled', index < currentPin.length);
+            });
+        }
+
+        function checkPin() {
+            if (currentPin === getSecureKey()) {
+                togglePinOverlay(false);
+                setTimeout(() => {
+                    personalLetter.classList.add('visible');
+                    publicLetter.classList.remove('visible');
+                    checkScrollNeed('personal-letter', 'hint-personal');
+                }, 500);
+            } else {
+                // Shake effect on error
+                document.querySelector('.pin-container').style.animation = 'shake 0.5s';
+                setTimeout(() => {
+                    document.querySelector('.pin-container').style.animation = '';
+                    clearPin();
+                }, 500);
+            }
+        }
+
+        // Floating background decorations
+        function addFloatingDecor() {
+            const symbols = ['🌸', '✨', '💖', '🌼', '⭐'];
+            for (let i = 0; i < 20; i++) {
+                const span = document.createElement('span');
+                span.className = 'decor';
+                span.innerText = symbols[Math.floor(Math.random() * symbols.length)];
+                span.style.left = Math.random() * 100 + 'vw';
+                span.style.top = Math.random() * 100 + 'vh';
+                span.style.fontSize = (Math.random() * 20 + 10) + 'px';
+                span.style.opacity = Math.random() * 0.5;
+                span.style.animation = `float ${Math.random() * 10 + 5}s infinite ease-in-out`;
+                document.body.appendChild(span);
+            }
+        }
+
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes float {
+                0%, 100% { transform: translateY(0) rotate(0); }
+                50% { transform: translateY(-30px) rotate(20deg); }
+            }
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                20%, 60% { transform: translateX(-10px); }
+                40%, 80% { transform: translateX(10px); }
+            }
+        `;
+        document.head.appendChild(style);
+        addFloatingDecor();
+
+        // Protección básica contra inspección
+        document.addEventListener('contextmenu', event => event.preventDefault());
+
+        document.onkeydown = function (e) {
+            // Deshabilitar F12
+            if (e.keyCode == 123) return false;
+            // Deshabilitar Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+Shift+C (Inspeccionar)
+            if (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74 || e.keyCode == 67)) return false;
+            // Deshabilitar Ctrl+U (Ver código fuente)
+            if (e.ctrlKey && e.keyCode == 85) return false;
+        };
+    </script>
+</body>
+
+</html>
