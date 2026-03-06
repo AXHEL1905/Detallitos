@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>🌸 Para ti🌸</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:wght@400;600;700;800&display=swap"
+        rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0
+        }
+
+        :root {
+            --yellow: #FFD93D;
+            --pink: #FF6B9D;
+            --purple: #C77DFF;
+            --peach: #FFB347;
+            --dark: #1D0735;
+        }
+
+        body {
+            min-height: 100dvh;
+            background: linear-gradient(160deg, #1a0535 0%, #2d0d54 40%, #1a0a3e 100%);
+            font-family: 'Nunito', sans-serif;
+            overflow: hidden;
+            position: relative;
+            touch-action: none;
+            user-select: none;
+        }
+
+        /* ── Stars ── */
+        #stars {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden
+        }
+
+        .star {
+            position: absolute;
+            border-radius: 50%;
+            background: #fff;
+            animation: twinkle var(--d) ease-in-out infinite alternate;
+        }
+
+        @keyframes twinkle {
+            from {
+                opacity: .1;
+                transform: scale(.8)
+            }
+
+            to {
+                opacity: .95;
+                transform: scale(1.3)
+            }
+        }
+
+        /* ── Header ── */
+        .hdr {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 10px 16px 6px;
+        }
+
+        .hdr h1 {
+            font-family: 'Pacifico', cursive;
+            font-size: 1.35rem;
+            color: var(--yellow);
+            text-shadow: 0 0 20px rgba(255, 217, 61, .6);
+        }
+
+        .hdr p {
+            color: rgba(255, 255, 255, .65);
+            font-size: .78rem;
+            margin-top: 2px
+        }
+
+        /* ── Info ── */
+        .info {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            padding: 0 12px 8px;
+        }
+
+        .badge {
+            background: rgba(255, 255, 255, .1);
+            border: 1px solid rgba(255, 255, 255, .18);
+            border-radius: 30px;
+            padding: 4px 12px;
+            color: #fff;
+            font-size: .75rem;
+            font-weight: 700;
+            backdrop-filter: blur(6px);
+        }
+
+        .badge span {
+            color: var(--yellow)
+        }
+
+        /* ── Main layout ── */
+        #game-area {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* ── Puzzle board frame ── */
+        #board-wrap {
+            position: relative;
+            border-radius: 14px;
+            overflow: visible;
+            flex-shrink: 0;
+        }
+
+        #ghost-canvas {
+            display: block;
+            border-radius: 14px;
+            border: 2px solid rgba(255, 255, 255, .18);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, .45), 0 0 0 1px rgba(255, 255, 255, .06);
+        }
+
+        /* ── Slot targets ── */
+        .slot {
+            position: absolute;
+            border-radius: 6px;
+            border: 2px dashed rgba(255, 255, 255, .25);
+            background: rgba(255, 255, 255, .04);
+            transition: border-color .2s, background .2s, box-shadow .2s;
+            pointer-events: none;
+        }
+
+        .slot.hover {
+            border-color: var(--yellow);
+            background: rgba(255, 217, 61, .12);
+            box-shadow: 0 0 16px rgba(255, 217, 61, .4);
+        }
+
+        .slot.filled {
+            border-color: rgba(125, 255, 172, .5);
+            background: transparent;
+        }
+
+        /* ── Piece tray ── */
+        #tray {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            margin-top: 8px;
+            padding: 8px 10px;
+            background: rgba(255, 255, 255, .05);
+            border-top: 1px solid rgba(255, 255, 255, .1);
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 6px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        /* ── Piece ── */
+        .piece {
+            position: fixed;
+            /* will be repositioned via JS */
+            border-radius: 8px;
+            border: 2px solid rgba(255, 255, 255, .3);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, .5);
+            cursor: grab;
+            transition: box-shadow .15s, border-color .15s;
+            touch-action: none;
+            z-index: 10;
+            overflow: hidden;
+            background: #1a0535;
+        }
+
+        .piece.dragging {
+            cursor: grabbing;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, .7);
+            border-color: var(--yellow);
+            z-index: 100;
+            transform: scale(1.08);
+        }
+
+        .piece.placed {
+            border-color: rgba(125, 255, 172, .7);
+            box-shadow: 0 0 12px rgba(125, 255, 172, .5);
+            cursor: default;
+            pointer-events: none;
+        }
+
+        .piece canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        /* ── Correct flash ── */
+        @keyframes snapFlash {
+            0% {
+                box-shadow: 0 0 0 rgba(125, 255, 172, 0)
+            }
+
+            40% {
+                box-shadow: 0 0 28px rgba(125, 255, 172, .9)
+            }
+
+            100% {
+                box-shadow: 0 0 12px rgba(125, 255, 172, .5)
+            }
+        }
+
+        .piece.snap-flash {
+            animation: snapFlash .4s ease forwards
+        }
+
+        /* ── Progress ── */
+        .progress-wrap {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            padding: 0 14px 6px;
+        }
+
+        .progress-track {
+            height: 5px;
+            background: rgba(255, 255, 255, .1);
+            border-radius: 10px;
+            overflow: hidden
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            background: linear-gradient(90deg, var(--pink), var(--yellow));
+            transition: width .4s ease;
+            box-shadow: 0 0 8px rgba(255, 217, 61, .4);
+        }
+
+        .progress-lbl {
+            text-align: right;
+            font-size: .66rem;
+            color: rgba(255, 255, 255, .4);
+            margin-top: 3px
+        }
+
+        /* ── Buttons ── */
+        .btn-row {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            gap: 8px;
+            padding: 0 14px 10px;
+            width: 100%;
+        }
+
+        .btn-primary {
+            flex: 1;
+            padding: 11px;
+            border: none;
+            border-radius: 50px;
+            font-family: 'Nunito', sans-serif;
+            font-size: .88rem;
+            font-weight: 800;
+            cursor: pointer;
+            background: linear-gradient(135deg, var(--pink), var(--purple));
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(199, 125, 255, .4);
+            transition: transform .14s;
+        }
+
+        .btn-primary:active {
+            transform: scale(.96)
+        }
+
+        .btn-ghost {
+            flex: 1;
+            padding: 11px;
+            border: 2px solid rgba(255, 255, 255, .18);
+            border-radius: 50px;
+            font-family: 'Nunito', sans-serif;
+            font-size: .88rem;
+            font-weight: 700;
+            cursor: pointer;
+            background: rgba(255, 255, 255, .06);
+            color: rgba(255, 255, 255, .75);
+            backdrop-filter: blur(4px);
+            transition: transform .14s;
+        }
+
+        .btn-ghost:active {
+            transform: scale(.96)
+        }
+
+        /* ── WIN OVERLAY ── */
+        #win-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 300;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(20, 5, 45, .7);
+            backdrop-filter: blur(10px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .6s ease;
+            padding: 24px;
+        }
+
+        #win-overlay.show {
+            opacity: 1;
+            pointer-events: all
+        }
+
+        .win-card {
+            background: linear-gradient(145deg, rgba(255, 255, 255, .15), rgba(255, 255, 255, .04));
+            border: 1px solid rgba(255, 255, 255, .25);
+            border-radius: 28px;
+            padding: 28px 22px 24px;
+            text-align: center;
+            max-width: 330px;
+            width: 100%;
+            animation: cardPop .65s .2s both cubic-bezier(.175, .885, .32, 1.275);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, .5), 0 0 40px rgba(255, 107, 157, .15);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .win-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 28px;
+            background: linear-gradient(120deg, transparent 30%, rgba(255, 255, 255, .1) 50%, transparent 70%);
+            background-size: 200% 100%;
+            animation: shimmer 2.5s ease infinite;
+            pointer-events: none;
+        }
+
+        @keyframes shimmer {
+            0% {
+                background-position: 200% 0
+            }
+
+            100% {
+                background-position: -200% 0
+            }
+        }
+
+        @keyframes cardPop {
+            from {
+                transform: scale(.45) rotate(-8deg);
+                opacity: 0
+            }
+
+            to {
+                transform: scale(1) rotate(0deg);
+                opacity: 1
+            }
+        }
+
+        .win-hearts {
+            font-size: 2.5rem;
+            display: block;
+            margin-bottom: 8px;
+            animation: hb .6s .9s ease-in-out infinite alternate
+        }
+
+        @keyframes hb {
+            to {
+                transform: scale(1.15)
+            }
+        }
+
+        .win-title {
+            font-family: 'Pacifico', cursive;
+            font-size: 1.65rem;
+            background: linear-gradient(135deg, var(--yellow), var(--peach));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+            line-height: 1.2;
+        }
+
+        .win-msg {
+            color: rgba(255, 255, 255, .9);
+            font-size: .9rem;
+            line-height: 1.7;
+            margin-bottom: 20px
+        }
+
+        .win-msg strong {
+            color: var(--yellow);
+            font-weight: 800
+        }
+
+        .win-msg .cursive {
+            font-family: 'Pacifico', cursive;
+            font-size: .95rem;
+            color: var(--pink);
+            display: block;
+            margin-top: 10px;
+        }
+
+        .btn-replay {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 50px;
+            font-family: 'Nunito', sans-serif;
+            font-size: .9rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--yellow), var(--peach));
+            color: var(--dark);
+            cursor: pointer;
+            box-shadow: 0 4px 18px rgba(255, 217, 61, .5);
+            transition: transform .14s;
+        }
+
+        .btn-replay:active {
+            transform: scale(.95)
+        }
+
+        /* ── FLOWER RAIN ── */
+        .flower-rain {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 299;
+            overflow: hidden
+        }
+
+        .ff {
+            position: absolute;
+            top: -80px;
+            animation: fallDown var(--fd) var(--fdelay) linear both;
+        }
+
+        @keyframes fallDown {
+            0% {
+                top: -80px;
+                opacity: 1;
+                transform: rotate(var(--r)) translateX(0)
+            }
+
+            50% {
+                opacity: 1;
+                transform: rotate(calc(var(--r)+180deg)) translateX(var(--sw))
+            }
+
+            100% {
+                top: 110vh;
+                opacity: 0;
+                transform: rotate(calc(var(--r)+360deg)) translateX(0)
+            }
+        }
+
+        .bp {
+            position: fixed;
+            pointer-events: none;
+            z-index: 298;
+            animation: burst var(--bd) var(--bdelay) ease-out forwards;
+        }
+
+        @keyframes burst {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1
+            }
+
+            100% {
+                transform: translate(var(--bx), var(--by)) scale(0);
+                opacity: 0
+            }
+        }
+
+        .ring {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 297;
+            top: 50%;
+            left: 50%;
+            width: 12px;
+            height: 12px;
+            animation: ringGrow .9s ease-out forwards;
+        }
+
+        @keyframes ringGrow {
+            from {
+                transform: translate(-50%, -50%) scale(1);
+                opacity: .9
+            }
+
+            to {
+                transform: translate(-50%, -50%) scale(35);
+                opacity: 0
+            }
+        }
+
+        /* ── Preview Modal ── */
+        #modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, .9);
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 14px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .3s;
+        }
+
+        #modal.show {
+            opacity: 1;
+            pointer-events: all
+        }
+
+        #modal canvas {
+            width: 70vw;
+            max-width: 260px;
+            border-radius: 14px;
+            box-shadow: 0 0 40px rgba(255, 217, 61, .3);
+            animation: zIn .3s ease
+        }
+
+        @keyframes zIn {
+            from {
+                transform: scale(.7);
+                opacity: 0
+            }
+
+            to {
+                transform: scale(1);
+                opacity: 1
+            }
+        }
+
+        #modal p {
+            color: rgba(255, 255, 255, .5);
+            font-size: .8rem
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="stars"></div>
+
+    <!-- Header -->
+    <div class="hdr">
+        <h1>🌼 Tu rompecabezas 🌼</h1>
+        <p>¡Arrastra cada pieza a su lugar y descubre la sorpresa!</p>
+    </div>
+
+    <!-- Info -->
+    <div class="info">
+        <div class="badge">Piezas: <span id="corr">0</span>/<span id="total-pieces">12</span></div>
+        <div class="badge">Movimientos: <span id="moves">0</span></div>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-wrap">
+        <div class="progress-track">
+            <div class="progress-fill" id="progress" style="width:0%"></div>
+        </div>
+        <div class="progress-lbl" id="progress-lbl">0% completado</div>
+    </div>
+
+    <!-- Game Area -->
+    <div id="game-area">
+        <div id="board-wrap">
+            <canvas id="ghost-canvas"></canvas>
+            <!-- slots and placed-pieces added by JS -->
+        </div>
+    </div>
+
+    <!-- Buttons -->
+    <div class="btn-row">
+        <button class="btn-primary" id="btn-reset">🔀 Mezclar</button>
+        <button class="btn-ghost" id="btn-preview">👁 Ver imagen</button>
+    </div>
+
+    <!-- Win overlay -->
+    <div id="win-overlay">
+        <div class="win-card">
+            <span class="win-hearts">🌸💛🌸</span>
+            <div class="win-title">¡Lo lograsteee! 🎉</div>
+            <p class="win-msg">
+                Sé que no es mucho, pero espero que te guste 🌼<br><br>
+                Tal vez últimamente todo ha estado cambiando
+                y el rumbo ha ido variando… pero en verdad
+                aprecio mucho haber podido volver a platicar
+                contigo. 💬<br><br>
+                <strong>Siento que nunca habrá algo mejor
+                    que me pudiera pasar en este año.</strong><br><br>
+                Graciasss por todo 🌻
+                <span class="cursive">tq &nbsp;🩷</span>
+            </p>
+            <button class="btn-replay" onclick="resetGame()">🔄 Jugar de nuevo</button>
+        </div>
+    </div>
+
+    <!-- Flower rain -->
+    <div class="flower-rain" id="flower-rain"></div>
+
+    <!-- Preview Modal -->
+    <div id="modal" onclick="closeModal()">
+        <canvas id="modal-canvas"></canvas>
+        <p>Toca para cerrar</p>
+    </div>
+
+    <script>
+        /* ══════ STARS ══════ */
+        const starsEl = document.getElementById('stars');
+        for (let i = 0; i < 70; i++) {
+            const s = document.createElement('div'); s.className = 'star';
+            const sz = Math.random() * 3 + 1;
+            s.style.cssText = `width:${sz}px;height:${sz}px;left:${Math.random() * 100}%;top:${Math.random() * 100}%;--d:${(Math.random() * 2 + 1.5).toFixed(1)}s;animation-delay:${(Math.random() * 3).toFixed(1)}s`;
+            starsEl.appendChild(s);
+        }
+
+        /* ══════ CONFIG ══════ */
+        const COLS = 3, ROWS = 4, TOTAL = COLS * ROWS;
+
+        /* ══════ DRAW GERBERA WITH STEM ══════ */
+        function drawGerbera(ctx, W, H) {
+            // Background - warm cream
+            const bg = ctx.createRadialGradient(W * .5, H * .3, 0, W * .5, H * .5, W * .9);
+            bg.addColorStop(0, '#fffde7'); bg.addColorStop(.7, '#fff9c4'); bg.addColorStop(1, '#f0e68c');
+            ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+
+            // --- STEM ---
+            const stemX = W * .5, stemBottom = H * .98, stemTop = H * .62;
+            const stemW = W * .055;
+
+            // Leaf left
+            ctx.save(); ctx.translate(stemX - stemW * .4, stemTop + H * .08); ctx.rotate(-0.55);
+            const lg1 = ctx.createLinearGradient(-W * .14, 0, W * .14, 0);
+            lg1.addColorStop(0, '#2e7d32'); lg1.addColorStop(.5, '#4caf50'); lg1.addColorStop(1, '#388e3c');
+            ctx.fillStyle = lg1; ctx.beginPath();
+            ctx.ellipse(0, 0, W * .14, H * .05, 0, 0, Math.PI * 2);
+            ctx.fill(); ctx.restore();
+
+            // Leaf right
+            ctx.save(); ctx.translate(stemX + stemW * .4, stemTop + H * .15); ctx.rotate(0.6);
+            const lg2 = ctx.createLinearGradient(-W * .12, 0, W * .12, 0);
+            lg2.addColorStop(0, '#388e3c'); lg2.addColorStop(.5, '#66bb6a'); lg2.addColorStop(1, '#2e7d32');
+            ctx.fillStyle = lg2; ctx.beginPath();
+            ctx.ellipse(0, 0, W * .12, H * .045, 0, 0, Math.PI * 2);
+            ctx.fill(); ctx.restore();
+
+            // Stem body
+            const stemGrad = ctx.createLinearGradient(stemX - stemW, 0, stemX + stemW, 0);
+            stemGrad.addColorStop(0, '#2e7d32'); stemGrad.addColorStop(.4, '#4caf50'); stemGrad.addColorStop(1, '#2e7d32');
+            ctx.fillStyle = stemGrad;
+            ctx.beginPath();
+            ctx.moveTo(stemX - stemW, stemBottom);
+            ctx.bezierCurveTo(stemX - stemW * 1.5, stemBottom - H * .2, stemX - stemW * .8, stemTop + H * .05, stemX - stemW * .5, stemTop);
+            ctx.lineTo(stemX + stemW * .5, stemTop);
+            ctx.bezierCurveTo(stemX + stemW * .8, stemTop + H * .05, stemX + stemW * 1.5, stemBottom - H * .2, stemX + stemW, stemBottom);
+            ctx.closePath(); ctx.fill();
+
+            // Sepal (sepals under flower)
+            const sepalY = stemTop + H * .01;
+            for (let i = 0; i < 5; i++) {
+                const a = (i / 5) * Math.PI * 2;
+                ctx.save(); ctx.translate(stemX, sepalY); ctx.rotate(a);
+                ctx.fillStyle = '#388e3c'; ctx.beginPath();
+                ctx.ellipse(0, -H * .04, W * .022, H * .055, 0, 0, Math.PI * 2);
+                ctx.fill(); ctx.restore();
+            }
+
+            // --- FLOWER ---
+            const cx = W * .5, cy = H * .3, R = W * .42;
+
+            // Outer petals (28 petals)
+            const petals = 28;
+            for (let p = 0; p < petals; p++) {
+                const angle = (p / petals) * Math.PI * 2;
+                const px = cx + Math.cos(angle) * R * .95, py = cy + Math.sin(angle) * R * .95;
+                ctx.save(); ctx.translate(px, py); ctx.rotate(angle + Math.PI / 2);
+                const g = ctx.createLinearGradient(0, -R * .6, 0, R * .6);
+                g.addColorStop(0, '#FFE234'); g.addColorStop(.4, '#FFAB00'); g.addColorStop(1, '#FF6F00');
+                ctx.fillStyle = g; ctx.beginPath();
+                // tapered petal shape
+                ctx.moveTo(0, -R * .55);
+                ctx.bezierCurveTo(R * .1, -R * .3, R * .16, 0, 0, R * .55);
+                ctx.bezierCurveTo(-R * .16, 0, -R * .1, -R * .3, 0, -R * .55);
+                ctx.fill(); ctx.restore();
+            }
+
+            // Inner petals (14)
+            const inner = 14;
+            for (let p = 0; p < inner; p++) {
+                const angle = (p / inner) * Math.PI * 2 + (Math.PI / inner);
+                const px = cx + Math.cos(angle) * R * .52, py = cy + Math.sin(angle) * R * .52;
+                ctx.save(); ctx.translate(px, py); ctx.rotate(angle + Math.PI / 2);
+                ctx.fillStyle = '#E65100'; ctx.beginPath();
+                ctx.ellipse(0, 0, R * .085, R * .22, 0, 0, Math.PI * 2);
+                ctx.fill(); ctx.restore();
+            }
+
+            // Highlight on petals (gloss)
+            ctx.save();
+            ctx.globalAlpha = 0.18;
+            const radHigh = ctx.createRadialGradient(cx - R * .15, cy - R * .2, 0, cx, cy, R);
+            radHigh.addColorStop(0, '#fff'); radHigh.addColorStop(1, 'transparent');
+            ctx.fillStyle = radHigh; ctx.beginPath(); ctx.arc(cx, cy, R * 1.05, 0, Math.PI * 2); ctx.fill();
+            ctx.restore();
+
+            // Center disk
+            const c2 = ctx.createRadialGradient(cx - R * .05, cy - R * .05, 0, cx, cy, R * .3);
+            c2.addColorStop(0, '#5D4037'); c2.addColorStop(.4, '#3E2723'); c2.addColorStop(1, '#1A0000');
+            ctx.fillStyle = c2; ctx.beginPath(); ctx.arc(cx, cy, R * .3, 0, Math.PI * 2); ctx.fill();
+
+            // Center texture dots
+            for (let d = 0; d < 80; d++) {
+                const da = Math.random() * Math.PI * 2, dr = Math.random() * R * .26;
+                const bright = Math.random() > .5;
+                ctx.fillStyle = bright ? `rgba(255,200,80,${.2 + Math.random() * .5})` : `rgba(80,30,0,${.3 + Math.random() * .4})`;
+                ctx.beginPath(); ctx.arc(cx + Math.cos(da) * dr, cy + Math.sin(da) * dr, 1 + Math.random() * 2.5, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Soft vignette
+            const vig = ctx.createRadialGradient(W / 2, H / 2, W * .2, W / 2, H / 2, W * .8);
+            vig.addColorStop(0, 'transparent'); vig.addColorStop(1, 'rgba(100,60,0,0.08)');
+            ctx.fillStyle = vig; ctx.fillRect(0, 0, W, H);
+        }
+
+        /* ══════ SETUP ══════ */
+        const vw = Math.min(window.innerWidth, 430);
+        const boardW = Math.min(vw - 20, 310);
+        const boardH = Math.round(boardW * (4 / 3)); // portrait 3:4
+        const pieceW = Math.round(boardW / COLS);
+        const pieceH = Math.round(boardH / ROWS);
+
+        // Draw source image
+        const srcCanvas = document.createElement('canvas');
+        srcCanvas.width = boardW * 2; srcCanvas.height = boardH * 2; // 2x for HiDPI
+        drawGerbera(srcCanvas.getContext('2d'), srcCanvas.width, srcCanvas.height);
+
+        // Setup board canvas (ghost/background)
+        const ghostCanvas = document.getElementById('ghost-canvas');
+        ghostCanvas.width = boardW; ghostCanvas.height = boardH;
+        ghostCanvas.style.width = boardW + 'px'; ghostCanvas.style.height = boardH + 'px';
+        const gctx = ghostCanvas.getContext('2d');
+
+        function drawGhostBoard() {
+            gctx.clearRect(0, 0, boardW, boardH);
+            // Cream background so dim image is visible
+            gctx.fillStyle = '#fffde7';
+            gctx.fillRect(0, 0, boardW, boardH);
+            // Dimmed gerbera
+            gctx.globalAlpha = 0.35;
+            gctx.drawImage(srcCanvas, 0, 0, boardW, boardH);
+            gctx.globalAlpha = 1;
+            // Grid dashed lines
+            gctx.setLineDash([4, 4]);
+            gctx.strokeStyle = 'rgba(100,60,0,0.3)'; gctx.lineWidth = 1.5;
+            for (let c = 1; c < COLS; c++) { gctx.beginPath(); gctx.moveTo(c * pieceW, 0); gctx.lineTo(c * pieceW, boardH); gctx.stroke(); }
+            for (let r = 1; r < ROWS; r++) { gctx.beginPath(); gctx.moveTo(0, r * pieceH); gctx.lineTo(boardW, r * pieceH); gctx.stroke(); }
+            gctx.setLineDash([]);
+        }
+        drawGhostBoard();
+
+        // Generate piece canvases
+        const pieceSrcs = []; // one canvas per piece id
+        for (let id = 0; id < TOTAL; id++) {
+            const col = id % COLS, row = Math.floor(id / COLS);
+            const pc = document.createElement('canvas');
+            const res = 2; // HiDPI
+            pc.width = pieceW * res; pc.height = pieceH * res;
+            pc.getContext('2d').drawImage(srcCanvas, col * pieceW * res, row * pieceH * res, pieceW * res, pieceH * res, 0, 0, pieceW * res, pieceH * res);
+            pieceSrcs[id] = pc;
+        }
+
+        // Board wrap sizing
+        const boardWrap = document.getElementById('board-wrap');
+        boardWrap.style.width = boardW + 'px'; boardWrap.style.height = boardH + 'px';
+
+        // Slots
+        const slots = [];
+        for (let id = 0; id < TOTAL; id++) {
+            const col = id % COLS, row = Math.floor(id / COLS);
+            const slot = document.createElement('div');
+            slot.className = 'slot';
+            slot.style.cssText = `left:${col * pieceW}px;top:${row * pieceH}px;width:${pieceW - 2}px;height:${pieceH - 2}px`;
+            slot.dataset.id = id;
+            boardWrap.appendChild(slot);
+            slots.push(slot);
+        }
+
+        /* ══════ PIECES ══════ */
+        let placedCount = 0, moveCount = 0;
+        const pieceEls = []; // piece DOM elements, indexed by piece-id
+        const piecePositions = []; // {x,y} current top-left in viewport
+        const pieceSlot = []; // which slot (id) the piece is placed (-1 = not placed)
+
+        function getBoardRect() { return boardWrap.getBoundingClientRect(); }
+
+        function scatterPieces() {
+            // Remove old pieces
+            pieceEls.forEach(p => { if (p.parentNode) p.parentNode.removeChild(p) });
+            pieceEls.length = 0; piecePositions.length = 0; pieceSlot.length = 0;
+            placedCount = 0; moveCount = 0;
+            updateUI();
+
+            const br = getBoardRect();
+            const vph = window.innerHeight;
+
+            // Scatter positions: ring around the board + below
+            // We put pieces in a tray-like zone below the board
+            const trayTop = br.bottom + 8;
+            const trayH = vph - trayTop - 10;
+            const piecesPerRow = Math.ceil(TOTAL / 2);
+            const trayPW = Math.min(pieceW * .9, (window.innerWidth - 20) / piecesPerRow - 6);
+            const trayPH = trayPW * (pieceH / pieceW);
+
+            // Two zones: above-left/right of board and below
+            // We'll arrange in a nice wrapped tray below
+            const positions = [];
+            // Try to place in tray rows
+            const cols2 = Math.floor((window.innerWidth - 16) / (trayPW + 6));
+            for (let i = 0; i < TOTAL; i++) {
+                const tc = i % cols2, tr = Math.floor(i / cols2);
+                const x = 8 + tc * (trayPW + 6);
+                const y = trayTop + tr * (trayPH + 6);
+                positions.push({ x, y });
+            }
+
+            // Shuffle positions
+            for (let i = positions.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [positions[i], positions[j]] = [positions[j], positions[i]];
+            }
+
+            for (let id = 0; id < TOTAL; id++) {
+                const el = document.createElement('div');
+                el.className = 'piece';
+                el.style.width = trayPW + 'px';
+                el.style.height = trayPH + 'px';
+                el.dataset.id = id;
+
+                const c = document.createElement('canvas');
+                c.width = pieceSrcs[id].width; c.height = pieceSrcs[id].height;
+                c.getContext('2d').drawImage(pieceSrcs[id], 0, 0);
+                el.appendChild(c);
+
+                const pos = positions[id];
+                el.style.left = pos.x + 'px';
+                el.style.top = pos.y + 'px';
+
+                document.body.appendChild(el);
+                pieceEls.push(el);
+                piecePositions.push({ x: pos.x, y: pos.y });
+                pieceSlot.push(-1);
+
+                setupDrag(el, id);
+            }
+        }
+
+        /* ══════ DRAG & DROP ══════ */
+        let activeDrag = null; // {id, el, startX, startY, origX, origY, offX, offY}
+
+        function setupDrag(el, id) {
+            // Touch
+            el.addEventListener('touchstart', e => {
+                if (pieceSlot[id] !== -1) return; // already placed
+                e.preventDefault();
+                const touch = e.changedTouches[0];
+                const rect = el.getBoundingClientRect();
+                startDrag(id, el, touch.clientX, touch.clientY,
+                    touch.clientX - rect.left, touch.clientY - rect.top);
+            }, { passive: false });
+
+            // Mouse (desktop fallback)
+            el.addEventListener('mousedown', e => {
+                if (pieceSlot[id] !== -1) return;
+                const rect = el.getBoundingClientRect();
+                startDrag(id, el, e.clientX, e.clientY,
+                    e.clientX - rect.left, e.clientY - rect.top);
+            });
+        }
+
+        function startDrag(id, el, cx, cy, offX, offY) {
+            activeDrag = { id, el, offX, offY };
+            el.classList.add('dragging');
+            el.style.zIndex = 100;
+            // Highlight all empty slots
+            slots.forEach((s, sid) => {
+                if (!s.classList.contains('filled')) s.classList.add('hover');
+            });
+        }
+
+        function getSlotUnder(cx, cy) {
+            const br = getBoardRect();
+            const lx = cx - br.left, ly = cy - br.top;
+            if (lx < 0 || ly < 0 || lx > boardW || ly > boardH) return -1;
+            const col = Math.floor(lx / pieceW), row = Math.floor(ly / pieceH);
+            if (col < 0 || col >= COLS || row < 0 || row >= ROWS) return -1;
+            return row * COLS + col;
+        }
+
+        document.addEventListener('touchmove', e => {
+            if (!activeDrag) return;
+            e.preventDefault();
+            const touch = e.changedTouches[0];
+            moveDrag(touch.clientX, touch.clientY);
+        }, { passive: false });
+
+        document.addEventListener('mousemove', e => {
+            if (!activeDrag) return;
+            moveDrag(e.clientX, e.clientY);
+        });
+
+        function moveDrag(cx, cy) {
+            const { el, offX, offY, id } = activeDrag;
+            const nx = cx - offX, ny = cy - offY;
+            el.style.left = nx + 'px';
+            el.style.top = ny + 'px';
+            piecePositions[id] = { x: nx, y: ny };
+
+            // Highlight nearest slot
+            const sid = getSlotUnder(cx, cy);
+            slots.forEach((s, i) => {
+                if (s.classList.contains('filled')) return;
+                if (i === sid) s.classList.add('hover');
+                else s.classList.remove('hover');
+            });
+        }
+
+        document.addEventListener('touchend', e => {
+            if (!activeDrag) return;
+            const touch = e.changedTouches[0];
+            endDrag(touch.clientX, touch.clientY);
+        });
+
+        document.addEventListener('mouseup', e => {
+            if (!activeDrag) return;
+            endDrag(e.clientX, e.clientY);
+        });
+
+        function endDrag(cx, cy) {
+            if (!activeDrag) return;
+            const { id, el } = activeDrag;
+            el.classList.remove('dragging');
+            el.style.zIndex = 10;
+            slots.forEach(s => { if (!s.classList.contains('filled')) s.classList.remove('hover') });
+
+            const sid = getSlotUnder(cx, cy);
+            moveCount++;
+            document.getElementById('moves').textContent = moveCount;
+
+            if (sid !== -1 && !slots[sid].classList.contains('filled')) {
+                // Place piece
+                if (sid === id) {
+                    // CORRECT!
+                    snapToSlot(id, sid);
+                } else {
+                    // Wrong slot - place temporarily then shake back
+                    const br = getBoardRect();
+                    const col = sid % COLS, row = Math.floor(sid / COLS);
+                    const tx = br.left + col * pieceW, ty = br.top + row * pieceH;
+                    el.style.left = tx + 'px'; el.style.top = ty + 'px';
+                    // Shake back
+                    el.style.transition = 'transform .1s';
+                    el.style.transform = 'translateX(-6px)';
+                    setTimeout(() => { el.style.transform = 'translateX(6px)'; }, 100);
+                    setTimeout(() => { el.style.transform = 'translateX(-4px)'; }, 200);
+                    setTimeout(() => { el.style.transform = ''; el.style.transition = ''; }, 300);
+                }
+            }
+
+            activeDrag = null;
+        }
+
+        function snapToSlot(pieceId, slotId) {
+            const el = pieceEls[pieceId];
+            const br = getBoardRect();
+            const col = slotId % COLS, row = Math.floor(slotId / COLS);
+            const tx = br.left + col * pieceW, ty = br.top + row * pieceH;
+
+            el.style.left = tx + 'px';
+            el.style.top = ty + 'px';
+            el.style.width = pieceW + 'px';
+            el.style.height = pieceH + 'px';
+            el.classList.add('placed', 'snap-flash');
+            el.style.borderRadius = '4px';
+
+            slots[slotId].classList.remove('hover');
+            slots[slotId].classList.add('filled');
+            pieceSlot[pieceId] = slotId;
+
+            placedCount++;
+            updateUI();
+            setTimeout(() => el.classList.remove('snap-flash'), 500);
+
+            // Refresh ghost — redraw with placed pieces more opaque
+            refreshGhost();
+
+            if (placedCount === TOTAL) {
+                setTimeout(triggerWin, 300);
+            }
+        }
+
+        function refreshGhost() { drawGhostBoard(); }
+
+        function updateUI() {
+            document.getElementById('corr').textContent = placedCount;
+            const pct = Math.round((placedCount / TOTAL) * 100);
+            document.getElementById('progress').style.width = pct + '%';
+            document.getElementById('progress-lbl').textContent = pct + '% completado';
+        }
+
+        /* ══════ WIN ══════ */
+        function triggerWin() {
+            spawnRings(); spawnBurst();
+            setTimeout(() => {
+                document.getElementById('win-overlay').classList.add('show');
+                startFlowers();
+            }, 350);
+        }
+        function spawnRings() {
+            ['#FFD93D', '#FF6B9D', '#C77DFF'].forEach((c, i) => {
+                const el = document.createElement('div'); el.className = 'ring';
+                el.style.border = '3px solid ' + c;
+                el.style.animationDelay = (i * .18) + 's';
+                document.body.appendChild(el);
+                el.addEventListener('animationend', () => el.remove());
+            });
+        }
+        function spawnBurst() {
+            const cols = ['#FFD93D', '#FF6B9D', '#C77DFF', '#FFB347', '#7dffac', '#fff'];
+            const cx = window.innerWidth / 2, cy = window.innerHeight / 2;
+            for (let i = 0; i < 90; i++) {
+                const el = document.createElement('div'); el.className = 'bp';
+                const a = Math.random() * Math.PI * 2, d = 60 + Math.random() * 300;
+                const sz = 3 + Math.random() * 10;
+                el.style.cssText = `left:${cx}px;top:${cy}px;width:${sz}px;height:${sz}px;
+      background:${cols[0 | Math.random() * cols.length]};
+      --bx:${Math.cos(a) * d}px;--by:${Math.sin(a) * d}px;
+      --bd:${(.5 + Math.random() * .9).toFixed(2)}s;--bdelay:${(Math.random() * .3).toFixed(2)}s;
+      border-radius:${Math.random() > .45 ? '50%' : '4px'}`;
+                document.body.appendChild(el);
+                el.addEventListener('animationend', () => el.remove());
+            }
+        }
+        const FLOWERS = ['🌸', '🌼', '🌺', '🌷', '💐', '🌻', '🏵️', '🌹', '🌸', '🌼'];
+        let flInt = null;
+        function startFlowers() {
+            const box = document.getElementById('flower-rain'); box.innerHTML = '';
+            function spawn() {
+                const el = document.createElement('div'); el.className = 'ff';
+                el.textContent = FLOWERS[0 | Math.random() * FLOWERS.length];
+                const fs = (1 + Math.random() * .9).toFixed(2);
+                el.style.cssText = `left:${Math.random() * 100}%;font-size:${fs}rem;
+      --fd:${(2.5 + Math.random() * 3).toFixed(1)}s;--fdelay:${(Math.random() * 2.5).toFixed(1)}s;
+      --sw:${(Math.random() * 70 - 35).toFixed(0)}px;--r:${(Math.random() * 60 - 30).toFixed(0)}deg`;
+                box.appendChild(el); el.addEventListener('animationend', () => el.remove());
+            }
+            let c = 0; const t = setInterval(() => { spawn(); if (++c >= 70) clearInterval(t); }, 90);
+            flInt = setInterval(() => { for (let i = 0; i < 25; i++)setTimeout(spawn, i * 130) }, 5000);
+        }
+        function stopFlowers() { clearInterval(flInt); document.getElementById('flower-rain').innerHTML = ''; }
+
+        /* ══════ CONTROLS ══════ */
+        document.getElementById('btn-reset').addEventListener('click', resetGame);
+        document.getElementById('btn-preview').addEventListener('click', () => {
+            const mc = document.getElementById('modal-canvas');
+            mc.width = srcCanvas.width / 2; mc.height = srcCanvas.height / 2;
+            mc.getContext('2d').drawImage(srcCanvas, 0, 0, mc.width, mc.height);
+            document.getElementById('modal').classList.add('show');
+        });
+        function closeModal() { document.getElementById('modal').classList.remove('show') }
+
+        function resetGame() {
+            document.getElementById('win-overlay').classList.remove('show');
+            stopFlowers();
+            // Reset slots
+            slots.forEach(s => { s.classList.remove('filled', 'hover') });
+            scatterPieces();
+            // Reset ghost
+            refreshGhost();
+        }
+
+        /* ══════ RESPONSIVE: reposition placed pieces on resize ══════ */
+        window.addEventListener('resize', () => {
+            slots.forEach((s, id) => {
+                if (s.classList.contains('filled')) {
+                    // Find which piece is here
+                    const pieceId = pieceSlot.indexOf(id);
+                    if (pieceId >= 0) {
+                        const br = getBoardRect();
+                        const col = id % COLS, row = Math.floor(id / COLS);
+                        pieceEls[pieceId].style.left = (br.left + col * pieceW) + 'px';
+                        pieceEls[pieceId].style.top = (br.top + row * pieceH) + 'px';
+                    }
+                }
+            });
+        });
+
+        /* ══════ INIT ══════ */
+        document.getElementById('total-pieces').textContent = TOTAL;
+        scatterPieces();
+    </script>
+</body>
+
+</html>
