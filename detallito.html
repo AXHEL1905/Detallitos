@@ -1013,16 +1013,32 @@
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 // Glow for power-up
+                let glowColor1 = 'rgba(255,180,0,0.5)';
+                let glowColor2 = 'rgba(255,180,0,0)';
+                let glowRadius = f.size * 0.8;
                 if (f.type === 'power') {
-                    ctx.shadowColor = '#FFD700';
-                    ctx.shadowBlur = 20;
+                    glowColor1 = 'rgba(255,215,0,0.7)';
+                    glowColor2 = 'rgba(255,215,0,0)';
+                    glowRadius = f.size * 1.5;
                 } else if (f.type === 'skull') {
-                    ctx.shadowColor = '#ff0044';
-                    ctx.shadowBlur = 15;
-                } else {
-                    ctx.shadowColor = 'rgba(255,180,0,0.5)';
-                    ctx.shadowBlur = 8;
+                    glowColor1 = 'rgba(255,0,68,0.7)';
+                    glowColor2 = 'rgba(255,0,68,0)';
+                    glowRadius = f.size * 1.2;
                 }
+
+                // Dibujar un brillo de fondo radial en lugar de sombras nativas
+                const glow = ctx.createRadialGradient(0, 0, 0, 0, 0, glowRadius);
+                glow.addColorStop(0, glowColor1);
+                glow.addColorStop(1, glowColor2);
+                ctx.beginPath();
+                ctx.arc(0, 0, glowRadius, 0, Math.PI * 2);
+                ctx.fillStyle = glow;
+                ctx.fill();
+
+                // DESACTIVAR SOMBRAS ANTES DE DIBUJAR EL EMOJI (Evita cuadros negros en celular)
+                ctx.shadowColor = 'transparent';
+                ctx.shadowBlur = 0;
+
                 ctx.fillText(f.emoji, 0, 0);
                 ctx.restore();
             });
@@ -1093,8 +1109,16 @@
             ctx.font = '18px "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji", sans-serif';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.shadowColor = 'rgba(255,215,0,0.6)';
-            ctx.shadowBlur = 8;
+
+            // Dibujar círculo brillante en lugar de sombra
+            ctx.beginPath();
+            ctx.arc(bx, by, 12, 0, Math.PI * 2);
+            ctx.fillStyle = 'rgba(255,215,0,0.4)';
+            ctx.fill();
+
+            // Desactivar sombra para el emoji
+            ctx.shadowColor = 'transparent';
+            ctx.shadowBlur = 0;
             ctx.fillStyle = 'white';
             ctx.fillText('🌼', bx, by);
 
