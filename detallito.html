@@ -501,7 +501,7 @@
                 🌼 <span>Atrapa gerberas</span> para ganar puntos.<br>
                 💀 <span>Esquiva las calaveras</span> o perderás una vida.<br>
                 ⭐ <span>Power-ups dorados</span> duplican tus puntos.<br>
-                🎯 Llega a <span>1000</span> puntos para ganar!
+                🎯 Llega a <span>3000</span> puntos para ganar!
             </div>
 
             <div class="star-row">⭐⭐⭐</div>
@@ -629,7 +629,7 @@
         resize();
         window.addEventListener('resize', resize);
 
-        const WIN_SCORE = 1000;
+        const WIN_SCORE = 3000;
         const BASKET_SPD = 12;
 
         /* ── Emojis available as fallers ── */
@@ -777,8 +777,8 @@
                 x: Math.random() * (W - size * 2) + size,
                 y: -size,
                 size,
-                speed: 1.5 + level * 0.6 + Math.random() * 1.2,
-                swing: (Math.random() - 0.5) * 1.4,
+                speed: 2.0 + level * 0.8 + Math.random() * 1.5, // Más rápido para mayor dificultad
+                swing: (Math.random() - 0.5) * 1.6,
                 emoji: template.emoji,
                 type: template.type,
                 points: template.points,
@@ -873,12 +873,13 @@
             }
 
             // Spawn
-            const spawnRate = Math.max(55 - level * 6, 22);
+            const spawnRate = Math.max(45 - level * 7, 15); // Aparecen más rápido
             spawnTimer += dt;
             if (spawnTimer >= spawnRate) {
                 spawnTimer = 0;
                 spawnFaller();
                 if (level >= 3) spawnFaller(); // double spawn on high levels
+                if (level >= 5 && Math.random() < 0.3) spawnFaller(); // chance of triple spawn at highest level
             }
 
             // Update fallers
@@ -930,7 +931,7 @@
                         updateHUD();
 
                         // Level up
-                        const levelThresholds = [0, 200, 400, 600, 800, WIN_SCORE];
+                        const levelThresholds = [0, 600, 1200, 1800, 2400, WIN_SCORE];
                         for (let lv = levelThresholds.length - 1; lv >= 1; lv--) {
                             if (score >= levelThresholds[lv] && level < lv) {
                                 level = lv;
@@ -1039,6 +1040,9 @@
                 ctx.shadowColor = 'transparent';
                 ctx.shadowBlur = 0;
 
+                // ESENCIAL: Restaurar el color a solido para que el motor de emojis no use el gradiente semitransparente como máscara
+                ctx.fillStyle = '#000000';
+
                 ctx.fillText(f.emoji, 0, 0);
                 ctx.restore();
             });
@@ -1119,7 +1123,8 @@
             // Desactivar sombra para el emoji
             ctx.shadowColor = 'transparent';
             ctx.shadowBlur = 0;
-            ctx.fillStyle = 'white';
+            // ESENCIAL: Restaurar el color para que el emoji nativo no herede colores raros
+            ctx.fillStyle = '#000000';
             ctx.fillText('🌼', bx, by);
 
             ctx.restore();
