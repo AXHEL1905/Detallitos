@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Jueguito para ti 💖</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Nunito:wght@400;600;700;800&display=swap"
+        rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --primary: #ff4d6d;
+            --secondary: #ff8fa3;
+            --accent: #ffb3c1;
+            --bg-top: #2b0f4c;
+            --bg-bottom: #150624;
+            --card-front: rgba(255, 255, 255, 0.1);
+            --card-back: linear-gradient(135deg, #ff4d6d, #ff8fa3);
+            --text: #ffffff;
+        }
+
+        body {
+            min-height: 100dvh;
+            background: linear-gradient(160deg, var(--bg-top), var(--bg-bottom));
+            font-family: 'Nunito', sans-serif;
+            color: var(--text);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            overflow-y: auto;
+            touch-action: pan-y;
+            user-select: none;
+            padding-bottom: 30px;
+        }
+
+        /* Particles Background */
+        #particles {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 50%;
+            animation: floatUp var(--duration) ease-in-out infinite;
+            bottom: -20px;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) scale(1) translateX(0);
+                opacity: 0;
+            }
+
+            15% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-120vh) scale(0.5) translateX(var(--drift));
+                opacity: 0;
+            }
+        }
+
+        /* Header */
+        .header {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            padding: 0 20px;
+        }
+
+        .header h1 {
+            font-family: 'Pacifico', cursive;
+            font-size: 2rem;
+            color: var(--accent);
+            text-shadow: 0 0 15px rgba(255, 179, 193, 0.6);
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+        }
+
+        .header p {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 15px;
+        }
+
+        .stats-container {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .stat-badge {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-badge span {
+            color: var(--accent);
+        }
+
+        /* Game Board */
+        .game-board {
+            position: relative;
+            z-index: 2;
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            padding: 10px;
+            width: 100%;
+            max-width: 400px;
+            perspective: 1000px;
+        }
+
+        /* Card */
+        .card {
+            width: 100%;
+            aspect-ratio: 3/4;
+            position: relative;
+            cursor: pointer;
+            perspective: 1000px;
+            /* Perspective goes here for 3D effect relative to card */
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-inner {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s cubic-bezier(0.4, 0.0, 0.2, 1);
+        }
+
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card.matched .card-inner {
+            transform: rotateY(180deg) scale(0.95);
+        }
+
+        .card.matched {
+            box-shadow: 0 0 25px rgba(255, 179, 193, 0.6);
+            cursor: default;
+        }
+
+        .card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            /* Safari */
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+            top: 0;
+            left: 0;
+        }
+
+        .card-front {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15), rgba(255, 255, 255, 0.05));
+            backdrop-filter: blur(10px);
+        }
+
+        .card-front::after {
+            content: '❓';
+            font-size: 1.5rem;
+            opacity: 0.6;
+            filter: grayscale(100%) brightness(200%);
+        }
+
+        .card-back {
+            background: var(--card-back);
+            transform: rotateY(180deg);
+        }
+
+        .card.matched .card-back {
+            background: linear-gradient(135deg, #ffd166, #ffb703);
+            border: 2px solid #fff;
+        }
+
+        /* Win Overlay */
+        .win-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 5, 25, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+            padding: 20px;
+        }
+
+        .win-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .win-modal {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            padding: 30px;
+            text-align: center;
+            max-width: 340px;
+            width: 100%;
+            transform: scale(0.8) translateY(20px);
+            opacity: 0;
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5), 0 0 30px rgba(255, 77, 109, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .win-overlay.active .win-modal {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+            transition-delay: 0.2s;
+        }
+
+        /* Shimmer effect on modal */
+        .win-modal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transform: skewX(-20deg);
+            animation: shine 3s infinite;
+        }
+
+        @keyframes shine {
+            0% {
+                left: -100%;
+            }
+
+            20% {
+                left: 200%;
+            }
+
+            100% {
+                left: 200%;
+            }
+        }
+
+        .win-icon {
+            font-size: 3.5rem;
+            margin-bottom: 10px;
+            animation: heartbeat 1.5s infinite;
+            display: inline-block;
+        }
+
+        @keyframes heartbeat {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            14% {
+                transform: scale(1.15);
+            }
+
+            28% {
+                transform: scale(1);
+            }
+
+            42% {
+                transform: scale(1.15);
+            }
+
+            70% {
+                transform: scale(1);
+            }
+        }
+
+        .win-title {
+            font-family: 'Pacifico', cursive;
+            font-size: 1.8rem;
+            color: var(--accent);
+            margin-bottom: 15px;
+            line-height: 1.2;
+        }
+
+        .win-message {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 25px;
+        }
+
+        .win-message strong {
+            color: #ffd166;
+            font-weight: 800;
+        }
+
+        .btn-restart {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-family: 'Nunito', sans-serif;
+            font-size: 1rem;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 77, 109, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-restart:active {
+            transform: scale(0.95);
+        }
+
+        /* Confetti */
+        .confetti {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            background-color: #f00;
+            z-index: 1000;
+        }
+
+        /* Instruction Tap */
+        .instruction {
+            margin-top: auto;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.4);
+            letter-spacing: 1px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Mobile Adjustments */
+        @media (max-height: 720px),
+        (max-width: 400px) {
+            .header {
+                margin-top: 10px;
+                margin-bottom: 5px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+                margin-bottom: 2px;
+            }
+
+            .header p {
+                margin-bottom: 8px;
+                font-size: 0.8rem;
+            }
+
+            .stats-container {
+                gap: 10px;
+            }
+
+            .stat-badge {
+                padding: 4px 12px;
+                font-size: 0.75rem;
+            }
+
+            .game-board {
+                gap: 6px;
+                padding: 5px 10px;
+            }
+
+            .card-face {
+                font-size: 1.8rem;
+                border-radius: 8px;
+            }
+
+            .card-front::after {
+                font-size: 1.2rem;
+            }
+
+            .card {
+                border-radius: 8px;
+            }
+
+            .instruction {
+                margin-bottom: 10px;
+                font-size: 0.75rem;
+            }
+
+            body {
+                padding-bottom: 10px;
+            }
+        }
+
+        @media (max-width: 350px) {
+            .game-board {
+                gap: 4px;
+            }
+
+            .card-face {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="particles"></div>
+
+    <div class="header">
+        <h1>Buscando tu Par 🧩</h1>
+        <p>Encuentra las parejas de cartas iguales.</p>
+        <div class="stats-container">
+            <div class="stat-badge">Movimientos: <span id="moves-count">0</span></div>
+            <div class="stat-badge">Parejas: <span id="matches-count">0</span>/12</div>
+        </div>
+    </div>
+
+    <div class="game-board" id="game-board">
+        <!-- Cards injected via JS -->
+    </div>
+
+    <div class="instruction">Toca una carta para voltearla</div>
+
+    <!-- Win Overlay -->
+    <div class="win-overlay" id="win-overlay">
+        <div class="win-modal">
+            <span class="win-icon">💌</span>
+            <div class="win-title">¡Qué buena memoria! ✨</div>
+            <p class="win-message">
+                Lograste encontrar todas las parejas en <strong><span id="final-moves">0</span></strong>
+                movimientos.<br><br>
+                Hice este pequeño jueguito para ti como un detalle diferente. Quería decirte que me gusta mucho platicar
+                contigo, y gracias por aguantar tantas tonterias que digo jaja. 💕<br><br>
+                <em>Gracias por todo tq.</em> 🌻
+            </p>
+            <button class="btn-restart" onclick="initGame()">Volver a jugar 🔄</button>
+        </div>
+    </div>
+
+    <script>
+        // Particles Background
+        const particlesContainer = document.getElementById('particles');
+        const particleCount = 20;
+
+        for (let i = 0; i < particleCount; i++) {
+            createParticle();
+        }
+
+        function createParticle() {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+
+            const size = Math.random() * 4 + 2;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+
+            particle.style.left = `${Math.random() * 100}vw`;
+            particle.style.setProperty('--duration', `${Math.random() * 10 + 10}s`);
+            particle.style.setProperty('--drift', `${(Math.random() - 0.5) * 100}px`);
+
+            // Random delay to stagger the animations
+            particle.style.animationDelay = `${Math.random() * 10}s`;
+
+            particlesContainer.appendChild(particle);
+        }
+
+        // Game Logic
+        const emojis = ['🧸', '🌻', '💌', '🍓', '🦋', '💖', '🌸', '✨', '🎀', '🍒', '🐶', '🌙'];
+        let cards = [];
+        let hasFlippedCard = false;
+        let lockBoard = false;
+        let firstCard, secondCard;
+        let moves = 0;
+        let matches = 0;
+
+        const board = document.getElementById('game-board');
+        const movesEl = document.getElementById('moves-count');
+        const matchesEl = document.getElementById('matches-count');
+        const winOverlay = document.getElementById('win-overlay');
+        const finalMovesEl = document.getElementById('final-moves');
+
+        function initGame() {
+            // Reset state
+            board.innerHTML = '';
+            winOverlay.classList.remove('active');
+            hasFlippedCard = false;
+            lockBoard = false;
+            firstCard = null;
+            secondCard = null;
+            moves = 0;
+            matches = 0;
+            updateStats();
+
+            // Create cards array
+            cards = [...emojis, ...emojis]; // Duplicate for pairs
+            cards.sort(() => Math.random() - 0.5); // Shuffle
+
+            // Render cards
+            cards.forEach((emoji, index) => {
+                const cardEl = document.createElement('div');
+                cardEl.classList.add('card');
+                cardEl.dataset.emoji = emoji;
+
+                cardEl.innerHTML = `
+                    <div class="card-inner">
+                        <div class="card-face card-front"></div>
+                        <div class="card-face card-back">${emoji}</div>
+                    </div>
+                `;
+
+                cardEl.addEventListener('click', flipCard);
+
+                // Add staggered entrance animation
+                cardEl.style.opacity = '0';
+                cardEl.style.transform = 'scale(0.8) translateY(20px)';
+
+                setTimeout(() => {
+                    cardEl.style.transition = 'all 0.4s ease-out';
+                    cardEl.style.opacity = '1';
+                    cardEl.style.transform = 'scale(1) translateY(0)';
+
+                    // Reset transition for normal flipping
+                    setTimeout(() => {
+                        cardEl.style.transition = 'transform 0.6s cubic-bezier(0.4, 0.0, 0.2, 1)';
+                    }, 400);
+                }, index * 80);
+
+                board.appendChild(cardEl);
+            });
+        }
+
+        function flipCard() {
+            if (lockBoard) return;
+            if (this === firstCard) return;
+
+            this.classList.add('flipped');
+
+            if (!hasFlippedCard) {
+                // First click
+                hasFlippedCard = true;
+                firstCard = this;
+                return;
+            }
+
+            // Second click
+            secondCard = this;
+            moves++;
+            updateStats();
+            checkForMatch();
+        }
+
+        function checkForMatch() {
+            let isMatch = firstCard.dataset.emoji === secondCard.dataset.emoji;
+
+            if (isMatch) {
+                disableCards();
+                matches++;
+                updateStats();
+
+                if (matches === emojis.length) {
+                    setTimeout(showWinScreen, 800);
+                }
+            } else {
+                unflipCards();
+            }
+        }
+
+        function disableCards() {
+            firstCard.removeEventListener('click', flipCard);
+            secondCard.removeEventListener('click', flipCard);
+
+            firstCard.classList.add('matched');
+            secondCard.classList.add('matched');
+
+            resetBoard();
+        }
+
+        function unflipCards() {
+            lockBoard = true;
+
+            setTimeout(() => {
+                firstCard.classList.remove('flipped');
+                secondCard.classList.remove('flipped');
+
+                resetBoard();
+            }, 1000);
+        }
+
+        function resetBoard() {
+            [hasFlippedCard, lockBoard] = [false, false];
+            [firstCard, secondCard] = [null, null];
+        }
+
+        function updateStats() {
+            movesEl.textContent = moves;
+            matchesEl.textContent = matches;
+        }
+
+        function showWinScreen() {
+            finalMovesEl.textContent = moves;
+            winOverlay.classList.add('active');
+            createConfetti();
+        }
+
+        function createConfetti() {
+            const colors = ['#ff4d6d', '#ffb3c1', '#ffd166', '#ffffff'];
+            for (let i = 0; i < 50; i++) {
+                const conf = document.createElement('div');
+                conf.classList.add('confetti');
+
+                // Random position above screen
+                conf.style.left = `${Math.random() * 100}vw`;
+                conf.style.top = `-10vh`;
+
+                conf.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
+                // Random animation
+                const duration = Math.random() * 2 + 2;
+                conf.animate([
+                    { transform: 'translate3d(0,0,0) rotate(0deg)', opacity: 1 },
+                    { transform: `translate3d(${(Math.random() - 0.5) * 200}px, 110vh, 0) rotate(${Math.random() * 720}deg)`, opacity: 0 }
+                ], {
+                    duration: duration * 1000,
+                    easing: 'cubic-bezier(.37,0,.63,1)',
+                    fill: 'forwards'
+                });
+
+                document.body.appendChild(conf);
+
+                // Cleanup
+                setTimeout(() => {
+                    conf.remove();
+                }, duration * 1000);
+            }
+        }
+
+        // Initialize game on load
+        window.onload = initGame;
+    </script>
+</body>
+
+</html>
