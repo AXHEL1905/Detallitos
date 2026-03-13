@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Súper Guía de Integrales 🚀 (Edición Limitless)</title>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script>
+      MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          displayMath: [['$$', '$$'], ['\\[', '\\]']]
+        },
+        startup: {
+          typeset: true
+        }
+      };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap');
+
+        :root {
+            --primary: #4F46E5; /* Indigo 600 */
+            --primary-dark: #3730A3; /* Indigo 800 */
+            --secondary: #10B981; /* Emerald 500 */
+            --accent: #F59E0B; /* Amber 500 */
+            --danger: #E11D48; /* Rose 600 */
+            --bg-body: #EEF2FF; /* Indigo 50 */
+            --bg-card: #FFFFFF;
+            --text-main: #1F2937; /* Gray 800 */
+            --text-light: #4B5563; /* Gray 600 */
+            --error: #EF4444; /* Red 500 */
+            --border-radius: 16px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-body);
+            background-image: radial-gradient(#e0e7ff 1px, transparent 1px);
+            background-size: 20px 20px;
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        header {
+            text-align: center;
+            margin: 60px 20px 40px;
+            max-width: 800px;
+        }
+
+        h1 {
+            color: var(--primary-dark);
+            font-size: 3.5rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 20px;
+        }
+
+        p.subtitle {
+            font-size: 1.25rem;
+            color: var(--text-light);
+            text-align: justify;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 950px;
+            padding: 0 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 50px;
+            margin-bottom: 80px;
+        }
+
+        /* Nav Pills (Horizontal Scroll) */
+        .nav-wrapper {
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            padding: 0 20px;
+            margin-bottom: 20px;
+        }
+
+        .nav-scroll {
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+            flex-wrap: wrap; /* Let it wrap on PC */
+            justify-content: center;
+            padding-bottom: 10px; /* Space for scrollbar if any */
+            max-width: 1000px;
+        }
+
+        .nav-scroll::-webkit-scrollbar { height: 6px; }
+        .nav-scroll::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 10px; }
+
+        .nav-pill {
+            background: white;
+            color: var(--primary);
+            padding: 10px 18px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            white-space: nowrap;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .nav-pill:hover, .nav-pill:focus {
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            background: #EEF2FF;
+        }
+
+        /* Cards */
+        .section-card {
+            background-color: var(--bg-card);
+            border-radius: var(--border-radius);
+            padding: 40px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+            position: relative;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: baseline;
+            gap: 15px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #E5E7EB;
+            padding-bottom: 15px;
+        }
+
+        .card-number {
+            background: var(--primary);
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 800;
+            padding: 5px 15px;
+            border-radius: 12px;
+            flex-shrink: 0;
+        }
+
+        .section-title {
+            color: var(--primary-dark);
+            font-size: 2.2rem;
+            font-weight: 700;
+        }
+
+        /* Text Elements */
+        .text-block {
+            font-size: 1.15rem;
+            margin-bottom: 25px;
+            text-align: justify;
+        }
+
+        .highlight {
+            background-color: #FEF3C7;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+            color: #92400E;
+        }
+
+        .formula-hero {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 30px;
+            border-radius: var(--border-radius);
+            font-size: 1.8rem;
+            text-align: center;
+            margin: 30px 0;
+            box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+        }
+
+        .note-box {
+            background-color: #F8FAFC;
+            border-left: 5px solid var(--danger);
+            padding: 20px;
+            border-radius: 0 12px 12px 0;
+            margin: 20px 0;
+            font-size: 1.1rem;
+        }
+
+        /* Step by Step Component */
+        .step-container {
+            margin: 30px 0;
+            border-left: 4px solid #E5E7EB;
+            padding-left: 30px;
+            position: relative;
+        }
+
+        .step {
+            margin-bottom: 35px;
+            position: relative;
+        }
+
+        .step::before {
+            content: "";
+            position: absolute;
+            left: -41px;
+            top: 5px;
+            width: 14px;
+            height: 14px;
+            background: var(--primary);
+            border: 4px solid white;
+            border-radius: 50%;
+        }
+
+        .step-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 10px;
+        }
+
+        .step-math {
+            background: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-size: 1.3rem;
+            margin-top: 15px;
+            display: inline-block;
+            color: #0F172A;
+            /* Allow horizontally scrolling long equations */
+            max-width: 100%;
+            overflow-x: auto;
+        }
+
+        /* Table */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 1.1rem;
+        }
+        
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #E5E7EB;
+        }
+
+        th { background-color: var(--primary); color: white; }
+        tr:nth-child(even) { background-color: #F8FAFC; }
+
+        /* Interactive Exercise Boxes */
+        .ix-card {
+            border: 2px dashed var(--primary);
+            background: #F8FAFC;
+            border-radius: var(--border-radius);
+            padding: 28px;
+            margin: 30px 0;
+        }
+        .ix-title {
+            font-size: 1.35rem;
+            font-weight: 800;
+            color: var(--primary-dark);
+            margin-bottom: 6px;
+        }
+        .ix-problem {
+            background: linear-gradient(135deg,#3730A3,#4F46E5);
+            color: white;
+            padding: 18px 25px;
+            border-radius: 12px;
+            font-size: 1.3rem;
+            text-align: center;
+            margin: 18px 0;
+        }
+        .ix-step {
+            background: white;
+            border: 2px solid #E2E8F0;
+            border-radius: 12px;
+            padding: 18px;
+            margin-bottom: 14px;
+            display: none;
+        }
+        .ix-step.active { display: block; }
+        .ix-q { font-size: 1.1rem; font-weight: 700; margin-bottom: 12px; }
+        .ix-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .ix-btn {
+            padding: 14px;
+            border: 2px solid #E2E8F0;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            font-size: 1.05rem;
+            transition: all 0.2s;
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+        }
+        .ix-btn:hover { border-color: var(--primary); background: #EEF2FF; }
+        .ix-btn.ok { background:#ECFDF5; border-color:#10B981; color:#065F46; pointer-events:none; }
+        .ix-btn.bad { background:#FEF2F2; border-color:#EF4444; color:#991B1B; pointer-events:none; }
+        .ix-feedback {
+            margin-top: 10px;
+            padding: 12px;
+            border-radius: 10px;
+            font-weight: 600;
+            display: none;
+            font-size: 1rem;
+        }
+        .ix-feedback.ok { background:#ECFDF5; color:#065F46; display:block; }
+        .ix-feedback.bad { background:#FEF2F2; color:#991B1B; display:block; }
+
+        @media (max-width: 768px) {
+            .section-card { padding: 25px; }
+            h1 { font-size: 2.5rem; }
+            .nav-scroll { flex-wrap: nowrap; justify-content: flex-start; }
+            .step-math { font-size: 1.1rem; padding: 10px 15px; }
+            td, th { padding: 10px; font-size: 1rem; }
+            .ix-opts { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Biblia del Cálculo Integral 🚀</h1>
+        <p class="subtitle">Vas a aprender TODOS los métodos de integración que existen en un temario estándar de Universidad. Desde qué significa esa 'S' alargada, hasta cómo aplicar métodos avanzados por "Partes" o con "Fracciones Múltiples". Respira hondo, cada sección está desmenuzada paso a pisito. ¡Nadie va a reprobar hoy!</p>
+    </header>
+
+    <div class="nav-wrapper">
+        <div class="nav-scroll">
+            <a href="#conceptos" class="nav-pill">1. ¿Qué es?</a>
+            <a href="#basicas" class="nav-pill">2. Regla Potencia</a>
+            <a href="#definidas" class="nav-pill">3. Definidas</a>
+            <a href="#sustitucion" class="nav-pill">4. Sustitución U</a>
+            <a href="#partes" class="nav-pill">5. Por Partes</a>
+            <a href="#fracciones" class="nav-pill">6. Fracciones Parciales</a>
+            <a href="#impropias" class="nav-pill">7. Impropias</a>
+            <a href="#memorama" class="nav-pill">🎮 Memorama</a>
+            <a href="#examen" class="nav-pill">📝 Examen</a>
+        </div>
+    </div>
+
+    <div class="container">
+        
+        <!-- 1. INTRODUCCIÓN -->
+        <div id="conceptos" class="section-card">
+            <div class="card-header">
+                <div class="card-number">1</div>
+                <h2 class="section-title">El Antídoto: ¿Qué es una integral?</h2>
+            </div>
+            
+            <p class="text-block">Imagina que la <b>derivada</b> es una licuadora que convierte una deliciosa ensalada en un batido verde incomprensible. La <b>integral</b> es la máquina mágica inversa: le metes el batido verde y te devuelve la ensalada original intacta.</p>
+            
+            <p class="text-block">En matemáticas, a la integral también se le llama <span class="highlight">Antiderivada</span>. Su propósito original geométrico es encontrar el <b>área exacta que se forma debajo de una curva</b> trazada en una gráfica.</p>
+
+            <div class="formula-hero">
+                $$ \int f(x) \,dx = F(x) + C $$
+            </div>
+
+            <table style="margin-top: 30px;">
+                <tr><th>Anatomía de la bestia</th><th>¿Qué significa?</th></tr>
+                <tr><td><b>$$ \int $$ (Simbolo integral)</b></td><td>Es literal una "S" alargada de "Suma continua". Significa que vas a sumar millones de retazos miniatura de papel.</td></tr>
+                <tr><td><b>$$ f(x) $$ (El Integrando)</b></td><td>La función a resolver. (El batido verde).</td></tr>
+                <tr><td><b>$$ dx $$ (El Diferencial)</b></td><td>Te avisa qué letra integras. Si dice "dx", integra solo sobre las X. Las 'Y' u otras letras se tratan como números estáticos.</td></tr>
+                <tr><td><b>$$ + C $$ (Constante de Integración)</b></td><td>¡EL FANTASMA! Siempre debes sumar "+ C". Si derivaste un "+100" o un "-5", este se hizo CERO y desapareció. La C representa ese número perdido en el tiempo.</td></tr>
+            </table>
+        </div>
+
+        <!-- 2. REGLAS BÁSICAS -->
+        <div id="basicas" class="section-card">
+            <div class="card-header">
+                <div class="card-number">2</div>
+                <h2 class="section-title">Polinomios (Regla de Potencia)</h2>
+            </div>
+            
+            <p class="text-block">A diferencia de la derivada donde le "restas 1" al exponente, en integrales <b>sumamos 1 al exponente y dividimos entre el nuevo número</b>. Es como regar una planta marchita y verla volver a crecer.</p>
+            
+            <div class="formula-hero" style="background: linear-gradient(135deg, #059669, #10B981);">
+                $$ \int x^n \,dx = \frac{x^{n+1}}{n+1} + C $$
+            </div>
+
+            <!-- EJEMPLO COMPLETÍSIMO -->
+            <h3 style="margin-top: 40px; color: var(--text-main);">Ejemplo Básico: $$ \int (6x^2 - 4x + 5) \,dx $$</h3>
+            <div class="step-container">
+                <div class="step">
+                    <div class="step-title">Paso 1: ¡Separa en integrales individuales!</div>
+                    <p>Si hay sumas y restas, rómpelas en pedacitos separados.</p>
+                    <div class="step-math">$$ \int 6x^2 \,dx - \int 4x \,dx + \int 5 \,dx $$</div>
+                </div>
+
+                <div class="step">
+                    <div class="step-title">Paso 2: Saca los números a que "esperen afuera"</div>
+                    <p>Si tienes un coeficiente multiplicador (6, 4, 5), SÁCALO al lado izquierdo del símbolo de integral. Estorban adentro.</p>
+                    <div class="step-math">$$ 6 \int x^2 \,dx - 4 \int x^1 \,dx + 5 \int 1 \,dx $$</div>
+                </div>
+
+                <div class="step">
+                    <div class="step-title">Paso 3 y 4: Aplica la regla a cada 'X' y Multiplica</div>
+                    <p>Súmale +1 al exponente de $$ x^2 $$ para que se haga 3, y DIVIDE entre 3.<br>La integral de 1 solo pega una "x" fantasma. No olvides multiplicar los números que aparcamos afuera paso anterior (El 6 y el 4).</p>
+                    <div class="step-math">$$ 6 \left( \frac{x^3}{3} \right) - 4 \left( \frac{x^2}{2} \right) + 5(x) $$</div>
+                    <div class="step-math" style="background: #ECFDF5; border-color: #10B981; margin-top: 15px;">
+                        <b>Respuesta Final Simplificada: $$ 2x^3 - 2x^2 + 5x + C $$</b>
+                    </div>
+                </div>
+            </div>
+
+            <div class="note-box">
+                <b>Trincheras Especiales de la Memoria:</b><br><br>
+                📉 <b>Si la 'X' está ABAJO:</b> $$ \int \frac{1}{x^3} \,dx $$ ¡Súbela cambiándole el signo! $$ \int x^{-3} \,dx $$. Y aplica potencia.<br>
+                ⛔ <b>La excepción (-1):</b> Jamás integres $$ \int x^{-1} \,dx $$ sumando uno, porque te queda $$ 0/0 $$. Esa siempre es: <b>$$ \ln|x| + C $$</b>.<br>
+                📏 <b>Magia Trigonométrica Inversa:</b> La derivada del Seno da Coseno... ¡Entonces la integral del Coseno da Seno!
+            </div>
+        </div>
+
+        <!-- 3. INTEGRALES DEFINIDAS -->
+        <div id="definidas" class="section-card">
+            <div class="card-header">
+                <div class="card-number">3</div>
+                <h2 class="section-title">Integrales Definidas (Los Numeritos)</h2>
+            </div>
+            
+            <p class="text-block">Cuando la integral tiene dos números clavados (como un 3 arriba y un 1 abajo), tu trabajo cambia: Ya no buscas una fórmula abstracta con '+ C', ahora vas por un  <b>NÚMERO EXACTO</b>. Quieren el Área contenida en esos dos bordes ($$x=1$$ hasta $$x=3$$).</p>
+            
+            <div class="formula-hero" style="background: linear-gradient(135deg, #D97706, #F59E0B);">
+                <p style="font-size: 1.2rem; margin-bottom: 10px;">Teorema Fundamental del Cálculo:</p>
+                $$ \int_{a}^{b} f(x) \,dx = F(b) - F(a) $$
+            </div>
+
+            <p class="text-block"><b>En cristiano:</b> Resuelves la integral sin hacer caso a los números, como aprendiste arriba. Luego tomas la respuesta, y sustituyes las letras 'X' primero por el número de <b>ARRIBA</b>, y ese resultado de calculadora le <b>RESTAS</b> el resultado de evaluar el número de <b>ABAJO</b>.</p>
+
+            <h3 style="margin-top: 30px; color: var(--text-main);">Ejemplo Guiado: $$ \int_{1}^{3} 2x \,dx $$</h3>
+
+            <div class="step-container">
+                <div class="step">
+                    <p><b>A. Integra:</b> Saca el 2, sube el exponente, y verás que mágicamente la integral limpia es: $$ \int 2x \,dx = x^2 $$</p>
+                    <p><b>B. Evalúo Línea Arriba (b=3):</b> $$ F(3) = (3)^2 = 9 $$</p>
+                    <p><b>C. Evalúo Línea Abajo (a=1):</b> $$ F(1) = (1)^2 = 1 $$</p>
+                    <p><b>D. RESTO (Arriba - Abajo):</b> $$ 9 - 1 = 8 $$ (El Resultado es 8 Área cuadrada).</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. SUSTITUCIÓN (U) -->
+        <div id="sustitucion" class="section-card">
+            <div class="card-header">
+                <div class="card-number">4</div>
+                <h2 class="section-title">Sustitución 'U' (El método del Disfraz)</h2>
+            </div>
+            
+            <p class="text-block">Cuando las ecuaciones son bestias con paréntesis metidos en los senos o en raíces cuadradas con potencias ridículas, tienes que usar una letra Falsa "u" para simplificar visualmente todo, lograr cancelar cosas y poder usar fórmulas de tabla clásicas.</p>
+            
+            <h3 style="margin-top: 30px; color: var(--text-main);">Tesis: $$ \int 2x \cos(x^2) \,dx $$</h3>
+
+            <div class="step-container">
+                <div class="step">
+                    <div class="step-title">1. Elige a tu Víctima ('u')</div>
+                    <p>¡Elige lo que esté más profundo/encerrado! El ángulo incómodo del Coseno es $$ x^2 $$. <br>Por ende, defino: <b>$$ u = x^2 $$</b></p>
+                </div>
+                <div class="step">
+                    <div class="step-title">2. Consigue su Derivada (y despeja a dx)</div>
+                    <p>Deriva a tu "u" recién elegida: $$ \frac{du}{dx} = 2x $$ <br>
+                    Ahora, <b>DESPEJA</b> la pobre $$ dx $$ intercambiándola de lugares:</p>
+                    <div class="step-math">$$ dx = \frac{du}{2x} $$</div>
+                </div>
+                <div class="step">
+                    <div class="step-title">3 y 4. ¡Disfraza y Cancela!</div>
+                    <p>Reescribe la integral inicial usando a tu "u" y a tu nuevo "dx". Al hacerlo te toparás con que el 2x original de afuera y el 2x divisor que inventamos... se ANULAN mágicamente dejando la integral inofensiva.</p>
+                    <div class="step-math">$$ \int 2x \cos(u) \left( \frac{du}{2x} \right) \rightarrow \int \cos(u) \,du $$</div>
+                </div>
+                <div class="step">
+                    <div class="step-title">5. Integra la 'u' y revierte el hechizo final</div>
+                    <p>Integral de cos(u) es simplemente sin(u). Finalmente, quitas la 'u' y pones lo que valía original ($$ x^2 $$).</p>
+                    <div class="step-math" style="background: #ECFDF5; border-color: #10B981;">
+                        <b>Respuesta: $$ \sin(x^2) + C $$</b>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. POR PARTES (LA VACA) -->
+        <div id="partes" class="section-card">
+            <div class="card-header">
+                <div class="card-number">5</div>
+                <h2 class="section-title">Por Partes: "La Famosa Vaca" 🐄</h2>
+            </div>
+            
+            <p class="text-block">¿Qué pasa si tienes dos tipos diferentes de funciones MULTIPLICÁNDOSE agresivamente (Como una "x" algebraica multiplicando a una exponencial $$e^x$$, o a un logaritmo $$ln(x)$$)?</p>
+            
+            <p class="text-block">Aquí ningún truco de 'U' salva, porque no son derivadas de sí mismas. Aquí entra el método de Integración "Por Partes". Obliga a memorizarte la rima poética universal:</p>
+            
+            <div class="formula-hero" style="background: linear-gradient(135deg, #E11D48, #BE123C);">
+                $$ \int u \,dv = u \cdot v - \int v \,du $$
+            </div>
+
+            <p style="text-align: center; font-size: 1.25rem; font-weight: 800; color: #BE123C; margin-bottom: 20px;">
+                "Un Día Vi = Una Vaca - sin Cola Vestida De Uniforme"
+            </p>
+
+            <div class="note-box" style="border-color: #FACC15;">
+                <b>ESTRATEGIA MUNDIAL: ILATE</b><br>
+                Para escoger quién diablos va a ser "U" y quién diablos será tu "dv" de lo que te dieron, lee en orden esta palabra mágica (ILATE). El primero que te encuentres de izquierda a derecha, será U. <br><br>
+                <b>I</b>nversas Trigonométricas ($$ \arcsin, \arctan $$)<br>
+                <b>L</b>ogarítmicas ($$ \ln x $$)<br>
+                <b>A</b>lgebraicas (Polinomios: $$ x, 3x^2, 5 $$)<br>
+                <b>T</b>rigonométricas ($$ \sin, \cos, \tan $$)<br>
+                <b>E</b>xponenciales ($$ e^x, 2^x $$)
+            </div>
+
+            <h3 style="margin-top: 30px; color: var(--text-main);">Ejemplo Desmenuzado: $$ \int x e^x \,dx $$</h3>
+            
+            <div class="step-container">
+                <div class="step">
+                    <p><b>1. Regla ILATE (Quién es U):</b> Tienes una $$ x $$ (Algebraica) y una $$ e^x $$ (Exponencial). En ILATE primero va la "A" antes de la "E". ¡Boom! Tu <b>$$ u = x $$</b>. <br>El resto sobrante se forzará a ser <b>$$ dv = e^x \,dx $$</b>.</p>
+                </div>
+                <div class="step">
+                    <p><b>2. Deriva tu vaca, Integra tu dv:</b> Tienes que construir las 4 piezas para la fórmula.<br>
+                    Tienes $$ u = x $$ → <b>Derívalo</b> obteniendo: $$ du = dx $$<br>
+                    Tienes $$ dv = e^x \,dx $$ → <b>Intégralo</b> (integral de Euler es Euler) obteniendo: $$ v = e^x $$</p>
+                </div>
+                <div class="step">
+                    <p><b>3. Arma el rompecabezas 'Vaca Vestida D Uniforme':</b> Intercambia las letras en la fórmula general.</p>
+                    <div class="step-math">$$ x \cdot e^x - \int e^x \,dx $$</div>
+                </div>
+                <div class="step">
+                    <p><b>4. Resuelve la nueva integral nacida al fondo y Listo:</b> Ahora en vez del monstruo feo inicial, tienes una súper amigable y dulce $$ \int e^x $$. ¡Resuélvela directo y pon el + C!</p>
+                    <div class="step-math" style="background: #FFF1F2; border-color: #E11D48;">
+                        <b>Respuesta Final: $$ x e^x - e^x + C $$</b>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PRÁCTICA INTERACTIVA: POR PARTES -->
+            <div class="ix-card" id="ix-partes-wrap">
+                <div class="ix-title">🎯 ¡Ahora tú! Resuelve paso a paso: Por Partes</div>
+                <div class="ix-problem">$$ \int x \sin(x) \,dx $$</div>
+
+                <div class="ix-step active" id="ixp-1">
+                    <div class="ix-q">Paso 1 → Según ILATE, ¿quién debe ser tu "u"?</div>
+                    <div class="ix-opts">
+                        <button class="ix-btn" onclick="ixCheck('ixp-1','ixp-2',false,this,'❌ No. La Trigonométrica (T) aparece DESPUÉS de la Algebraica (A) en ILATE.')">$$ \sin(x) $$ — es trigonométrica</button>
+                        <button class="ix-btn" onclick="ixCheck('ixp-1','ixp-2',true,this,'✅ ¡Correcto! La x es Algebraica y va antes de Trig en ILATE. u = x y dv = sin(x)dx')">$$ x $$ — es algebraica</button>
+                    </div>
+                    <div class="ix-feedback"></div>
+                </div>
+
+                <div class="ix-step" id="ixp-2">
+                    <div class="ix-q">Paso 2 → Si u = x, ¿cuál es du (su derivada)?</div>
+                    <div class="ix-opts">
+                        <button class="ix-btn" onclick="ixCheck('ixp-2','ixp-3',true,this,'✅ ¡Exacto! La derivada de x es simplemente 1, entonces du = dx.')">$$ du = dx $$</button>
+                        <button class="ix-btn" onclick="ixCheck('ixp-2','ixp-3',false,this,'❌ No olvides: derivar x es bajísimo nivel. La derivada de x es 1, no x²/2 (eso sería integrar).')">$$ du = \frac{x^2}{2} $$</button>
+                    </div>
+                    <div class="ix-feedback"></div>
+                </div>
+
+                <div class="ix-step" id="ixp-3">
+                    <div class="ix-q">Paso 3 → Si dv = sin(x)dx, ¿cuál es v (su integral)?</div>
+                    <div class="ix-opts">
+                        <button class="ix-btn" onclick="ixCheck('ixp-3','ixp-4',false,this,'❌ Cuidado: la integral de sin(x) es NEGATIVA coseno. Recuerda: al integrar sin(x) cambia de signo.')">$$ v = \cos(x) $$</button>
+                        <button class="ix-btn" onclick="ixCheck('ixp-3','ixp-4',true,this,'✅ ¡Perfecto! ∫sin(x)dx = -cos(x). La integral del seno lleva signo negativo.')">$$ v = -\cos(x) $$</button>
+                    </div>
+                    <div class="ix-feedback"></div>
+                </div>
+
+                <div class="ix-step" id="ixp-4">
+                    <div class="ix-q">Paso 4 → Ahora aplica u·v − ∫v du. Con u=x, v=−cos(x), du=dx, ¿cómo queda?</div>
+                    <div class="ix-opts">
+                        <button class="ix-btn" onclick="ixCheck('ixp-4',null,true,this,'🎉 ¡CAMPEONA! La respuesta es correcta. −x·cos(x) + sin(x) + C. Primero armaste u·v = x·(−cos x), luego restaste ∫(−cos x)dx = −sin(x), pero el doble negativo lo vuelve +sin(x).')">$$ -x\cos(x) + \sin(x) + C $$</button>
+                        <button class="ix-btn" onclick="ixCheck('ixp-4',null,false,this,'❌ Recuerda el signo. u·v = x·(−cosx) y luego −∫v·du = −∫(−cos x)dx = +sin(x). ¡Inténtalo de nuevo!')">$$ x\cos(x) - \sin(x) + C $$</button>
+                    </div>
+                    <div class="ix-feedback"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. FRACCIONES PARCIALES -->
+        <div id="fracciones" class="section-card">
+            <div class="card-header">
+                <div class="card-number">6</div>
+                <h2 class="section-title">Fracciones Parciales (Rompiendo el Denominador)</h2>
+            </div>
+            
+            <p class="text-block">Cuando tengas una división inmensa de polinomios arriba y abajo, como en $$ \int \frac{5x}{x^2 - 4} \,dx $$, y no puedas usar 'u' para que se cancelle, tenemos que <b>quebrar esa sola fracción enorme, en la suma de dos fracciones chiquitas inofensivas.</b></p>
+            
+            <p class="text-block">Es un proceso 90% Álgebra y 10% Cálculo.</p>
+
+            <h3 style="margin-top: 30px; color: var(--text-main);">Metodología Rápida: $$ \int \frac{3x+2}{(x-1)(x+2)} \,dx $$</h3>
+
+            <div class="step-container">
+                <div class="step">
+                    <p><b>1. Escribe la estructura Fantasma:</b> Como hay dos factores multiplicándose abajo, inventa dos fracciones con letras misteriosas de techo 'A' y 'B'.</p>
+                    <div class="step-math">$$ \frac{3x+2}{(x-1)(x+2)} = \frac{A}{(x-1)} + \frac{B}{(x+2)} $$</div>
+                </div>
+                <div class="step">
+                    <p><b>2. Haz que cuadren las partes superiores (Denominadores cruzados):</b> Tienes que buscar multiplicando qué valores deben tener A y B para ser idénticos al techo real (3x+2).</p>
+                    <div class="step-math">$$ 3x+2 = A(x+2) + B(x-1) $$</div>
+                    <p style="margin-top: 10px; font-size: 0.95em;">*Tip: Para despejarlos rápido: Di que $$ x = 1 $$ y que $$ x = -2 $$ para anularlos y forzar darte los resultados, ej. A= 5/3 , B= 4/3.*</p>
+                </div>
+                <div class="step">
+                    <p><b>3. ¡Integra ya desglosado!:</b> Vuelve al mundo del cálculo con tus fraccciones separadas. Siempre resultarán en logaritmos naturales (porque la X quedó en rango de potencia abajo -1).</p>
+                    <div class="step-math" style="background: #F8FAFC;">
+                        <b>$$ A \cdot \int \frac{1}{(x-1)} \,dx + B \cdot \int \frac{1}{(x+2)} \,dx $$</b><br>
+                        <b>Respuesta Final: $$ A \ln|x-1| + B \ln|x+2| + C $$</b> 
+                    </div>
+                </div>
+            </div>
+
+            <!-- PRÁCTICA INTERACTIVA: FRACCIONES PARCIALES -->
+            <div class="ix-card" id="ix-frac-wrap">
+                <div class="ix-title">🎯 ¡Ahora tú! Practica Fracciones Parciales</div>
+                <div class="ix-problem">$$ \int \frac{5}{x(x+5)} \,dx $$</div>
+
+                <div class="ix-step active" id="ixf-1">
+                    <div class="ix-q">Paso 1 → ¿Cómo se plantea la descomposición en fracciones parciales?</div>
+                    <div class="ix-opts">
+                        <button class="ix-btn" onclick="ixCheck('ixf-1','ixf-2',false,this,'❌ Eso es solo copiar el original. Debes separar cada factor del denominador en su propia fracción individual con letras A, B desconocidas.')">$$ \frac{5}{x(x+5)} $$</button>
+                        <button class="ix-btn" onclick="ixCheck('ixf-1','ixf-2',true,this,'✅ ¡Correcto! Cada factor del denominador da origen a una fracción separada con incógnitas A y B en el numerador.')">$$ \frac{A}{x} + \frac{B}{x+5} $$</button>
+                    </div>
+                    <div class="ix-feedback"></div>
+                </div>
+
+                <div class="ix-step" id="ixf-2">
+                    <div class="ix-q">Paso 2 → Multiplicando ambos lados por x(x+5) obtenemos: 5 = A(x+5) + B(x). Para hallar A, ¿qué valor de x usas para anular el término de B?</div>
+                    <div class="ix-opts">
+                        <button class="ix-btn" onclick="ixCheck('ixf-2','ixf-3',true,this,'✅ ¡Exacto! Si x=0, el término B·x se vuelve cero y despejamos A fácilmente: 5 = A(0+5) → A = 1.')">$$ x = 0 $$</button>
+                        <button class="ix-btn" onclick="ixCheck('ixf-2','ixf-3',false,this,'❌ Con x=1 no se anula nada. Busca el valor de x que haga CERO al factor que acompaña a B, que en este caso es x.')">$$ x = 1 $$</button>
+                    </div>
+                    <div class="ix-feedback"></div>
+                </div>
+
+                <div class="ix-step" id="ixf-3">
+                    <div class="ix-q">Paso 3 → Con x=0 hallamos A=1. Ahora para B, usamos x=−5 y obtenemos B=−1. Ya separada la integral queda: ∫(1/x)dx + ∫(−1/(x+5))dx. ¿Cuál es el resultado final?</div>
+                    <div class="ix-opts">
+                        <button class="ix-btn" onclick="ixCheck('ixf-3',null,true,this,'🎉 ¡INCREÍBLE! Así es. Ambas son integrales del tipo 1/x que dan logaritmos naturales.')">$$ \ln|x| - \ln|x+5| + C $$</button>
+                        <button class="ix-btn" onclick="ixCheck('ixf-3',null,false,this,'❌ La integral de 1/x no es 1/x², siempre resulta en un logaritmo natural: ln|x|. ¡Revisa la tabla básica!')">$$ \frac{1}{x^2} - \frac{1}{(x+5)^2} + C $$</button>
+                    </div>
+                    <div class="ix-feedback"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 7. INTEGRALES IMPROPIAS -->
+        <div id="impropias" class="section-card">
+            <div class="card-header">
+                <div class="card-number">7</div>
+                <h2 class="section-title">Impropias: El viaje al Infinito 🌌</h2>
+            </div>
+            
+            <p class="text-block">Todo este tiempo usamos áreas exactas acotadas en cajas de madera... Pero ¿y si tienes un límite mágico llamado Infinito $$(\infty)$$? O bien, si la función revienta en ese espacio (como cuando fuerzas dividir entre 0).</p>
+
+            <p class="text-block">Te van a pedir resolver algo como: <b>$$ \int_{1}^{\infty} \frac{1}{x^2} \,dx $$</b></p>
+            
+            <div class="note-box" style="border-color: #2563EB;">
+                <b>Límite Fantasma (La técnica formal de Límite $$ \lim $$):</b><br>
+                En cálculo no puedes escribir infinito y operarlo como si fuera un "2". Está prohibido. Cambias el símbolo del infinito por una letra falsa variable cualquiera (por ejemplo, 't'), y delante pones la legendaria advertencia límite.
+            </div>
+
+            <div class="step-container">
+                <div class="step">
+                    <p><b>1. Formatear la Bestia:</b> Cámbiale el límite del numerito infinito a letra, dejándolo legal.</p>
+                    <div class="step-math">$$ \lim_{t \to \infty} \int_{1}^{t} x^{-2} \,dx $$</div>
+                </div>
+                <div class="step">
+                    <p><b>2. Integras Definida usando la técnica de la RESTA normal:</b> Regla de potencia para subir exponente: (queda $$ - \frac{1}{x} $$). Y evalúalo entre 1 y 't'. (Arriba, menos Abajo).</p>
+                    <div class="step-math">$$ \lim_{t \to \infty} \left( -\frac{1}{t} - \left( -\frac{1}{1} \right) \right) $$</div>
+                </div>
+                <div class="step">
+                    <p><b>3. Ejecutas el límite (Manda mentalmente t a infinito):</b> ¿Qué pasa si divides un pastel 1 entre infinitas mil millones de personas? Que les toca <b>CERO (0)</b> de rebanada.<br>Entonces el término $$ \left(-\frac{1}{\infty}\right) $$ muere y se vuelve cero.</p>
+                    <div class="step-math" style="background: #EFF6FF; border-color: #2563EB;">
+                        <b>Queda vivo el +1. Respuesta Exacta: $$ 1 $$</b><br>
+                        <span style="font-size: 0.9em; font-weight:normal;">Se dice que la Integral CONVERGE.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PRÁCTICA INTERACTIVA: IMPROPIAS -->
+            <div class="ix-card" id="ix-imp-wrap">
+                <div class="ix-title">🎯 ¡Ahora tú! Integrales Impropias</div>
+                <div class="ix-problem">$$ \int_{0}^{\infty} e^{-x} \,dx $$</div>
+
+                <div class="ix-step active" id="ixi-1">
+                    <div class="ix-q">Paso 1 → ¿Cuál es el primer paso obligatorio antes de integrar cuando hay un ∞?</div>
+                    <div class="ix-opts">
+                        <button class="ix-btn" onclick="ixCheck('ixi-1','ixi-2',false,this,'❌ No puedes operar con ∞ directamente en cálculo. Debes primero convertirlo en una variable (como t) y poner el límite lim t→∞.')">Integrar directo con ∞ como número.</button>
+                        <button class="ix-btn" onclick="ixCheck('ixi-1','ixi-2',true,this,'✅ ¡Correcto! Reescribes ∞ como una letra t y pones lim (t→∞) delante de la integral definida.')">Cambiar ∞ por 't' y escribir lim(t→∞) delante.</button>
+                    </div>
+                    <div class="ix-feedback"></div>
+                </div>
+
+                <div class="ix-step" id="ixi-2">
+                    <div class="ix-q">Paso 2 → La integral de e^(−x) es −e^(−x). Evaluando entre 0 y t: F(t)−F(0) = −e^(−t) − (−e^0). ¿Cuánto vale −e^0?</div>
+                    <div class="ix-opts">
+                        <button class="ix-btn" onclick="ixCheck('ixi-2','ixi-3',true,this,'✅ ¡Exacto! e^0 siempre es 1, entonces −e^0 = −1. El resultado antes del límite es: −e^(−t) + 1.')">$$ -e^0 = -1 $$</button>
+                        <button class="ix-btn" onclick="ixCheck('ixi-2','ixi-3',false,this,'❌ Cualquier número elevado al exponente 0 es siempre 1. e^0 = 1, así que −e^0 = −1.')">$$ -e^0 = 0 $$</button>
+                    </div>
+                    <div class="ix-feedback"></div>
+                </div>
+
+                <div class="ix-step" id="ixi-3">
+                    <div class="ix-q">Paso 3 → Tenemos lim(t→∞) de (−e^(−t) + 1). Cuando t→∞, ¿cuánto vale e^(−∞) y cuál es el resultado final?</div>
+                    <div class="ix-opts">
+                        <button class="ix-btn" onclick="ixCheck('ixi-3',null,true,this,'🎉 ¡PERFECTA! e^(−∞) = 0, entonces −0 + 1 = 1. La integral converge a 1. ¡Acabas de calcular un área infinita que da un número finito!')">$$ e^{-\infty} = 0 \Rightarrow \text{Resultado} = 1 $$</button>
+                        <button class="ix-btn" onclick="ixCheck('ixi-3',null,false,this,'❌ e^(−∞) tiende a cero (no a infinito). Una base positiva elevada a −∞ se vuelve infinitamente pequeña, acercándose a 0.')">$$ e^{-\infty} = \infty \Rightarrow \text{Diverge} $$</button>
+                    </div>
+                    <div class="ix-feedback"></div>
+                </div>
+            </div>
+        </div>
+
+        <div id="memorama" class="section-card">
+            <h2 class="section-title" style="text-align: center;">🎮 Memorama Rápido (Conceptos)</h2>
+            <p class="text-block" style="text-align: center;">Haz click para encontrar el par y reforzar tu memoria fotográfica con las integrales.</p>
+            <div class="memory-game" id="memoryGame" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 15px; margin-top:20px;"></div>
+            <div style="text-align: center;"><button class="nav-pill" onclick="initMemoryGame()" style="margin-top:25px; cursor:pointer; font-size:1.1rem; padding: 12px 25px;">Revolver Cartas de Nuevo 🔄</button></div>
+        </div>
+
+        <div id="examen" class="section-card" style="background: white; border-top: 5px solid var(--primary-dark);">
+            <h2 class="section-title" style="text-align: center; color: var(--primary-dark); font-size: 2.5rem;">📝 Examen de Maestría</h2>
+            <p class="text-block" style="text-align: center; color: var(--error); font-weight: bold;">Pon a prueba lo que acabas de leer sobre métodos avanzados.</p>
+            <div class="quiz-container" id="quizContainer">
+                <div class="step-title" id="quizQuestion" style="font-size: 1.5rem; text-align:center; margin-bottom: 20px;">Cargando examen...</div>
+                <div class="exercise-options" id="quizOptions" style="display: flex; flex-direction:column; gap: 12px;"></div>
+                <div style="text-align: center; font-size: 1.2rem; margin-top: 25px; font-weight: bold;" id="quizScoreDisplay"></div>
+                <button class="nav-pill" id="nextQuizBtn" style="display: none; margin: 30px auto; cursor:pointer; font-size:1.2rem; padding: 15px 30px;" onclick="nextQuizQuestion()">Siguiente Pregunta 👉</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Memorama Logic
+        const memoryData = [
+            { id: 1, text: '$$ \\int x^n \\,dx $$', type: 'q' }, { id: 1, text: '$$ \\frac{x^{n+1}}{n+1} + C $$', type: 'a' },
+            { id: 2, text: 'ILATE', type: 'q' }, { id: 2, text: 'Inversas, Log, Alg, Trig, Exp', type: 'a' },
+            { id: 3, text: '$$ \\int \\frac{1}{x} \\,dx $$', type: 'q' }, { id: 3, text: '$$ \\ln|x| + C $$', type: 'a' },
+            { id: 4, text: 'Vaca', type: 'q' }, { id: 4, text: '$$ u \\cdot v - \\int v \\,du $$', type: 'a' }
+        ];
+        let firstCard = null, secondCard = null, lockBoard = false, matchedPairs = 0;
+        function initMemoryGame() {
+            const gb = document.getElementById('memoryGame'); gb.innerHTML = '';
+            matchedPairs = 0; firstCard = null; secondCard = null; lockBoard = false;
+            let arr = [...memoryData].sort(() => Math.random() - 0.5);
+            arr.forEach(item => {
+                let c = document.createElement('div');
+                c.style.padding = '20px'; c.style.border = '2px solid #CBD5E1'; c.style.borderRadius = '12px';
+                c.style.textAlign = 'center'; c.style.cursor = 'pointer'; c.style.background = '#F8FAFC'; c.style.minHeight = '100px';
+                c.style.display = 'flex'; c.style.alignItems='center'; c.style.justifyContent='center'; c.style.fontSize='1.1rem';
+                c.innerHTML = `<div style="display:none; width:100%;">${item.text}</div><div style="font-size:2rem; width:100%;">🧠</div>`;
+                c.onclick = function() {
+                    if (lockBoard || this === firstCard || this.style.borderColor === 'green') return;
+                    this.children[0].style.display = 'block'; this.children[1].style.display = 'none';
+                    if (!firstCard) { firstCard = {el: this, id: item.id}; return; }
+                    secondCard = {el: this, id: item.id}; lockBoard = true;
+                    if (firstCard.id === secondCard.id) {
+                        firstCard.el.style.borderColor = '#10B981'; secondCard.el.style.borderColor = '#10B981';
+                        firstCard.el.style.background = '#ECFDF5'; secondCard.el.style.background = '#ECFDF5';
+                        firstCard = null; secondCard = null; lockBoard = false; matchedPairs++;
+                    } else {
+                        setTimeout(() => {
+                            firstCard.el.children[0].style.display = 'none'; firstCard.el.children[1].style.display = 'block';
+                            secondCard.el.children[0].style.display = 'none'; secondCard.el.children[1].style.display = 'block';
+                            firstCard = null; secondCard = null; lockBoard = false;
+                        }, 1200);
+                    }
+                };
+                gb.appendChild(c);
+            });
+            if(window.MathJax) MathJax.typesetPromise([gb]);
+        }
+
+        // Quiz Logic
+        const quizExamData = [
+            { q: "¿Qué significa la '+ C' que siempre se pone en integrales indefinidas?", options: ["Es para redondear el resultado", "Representa cualquier constante que pudo existir antes de derivar y desapareció al hacerse cero", "Es el número de pasos realizados"], ans: 1 },
+            { q: "Aplica la Regla de la Potencia: $$ \\int x^5 \\,dx = \\, ? $$", options: ["$$ 5x^4 + C $$", "$$ \\frac{x^6}{6} + C $$", "$$ x^6 + C $$"], ans: 1 },
+            { q: "¿Cuál es la integral de una constante sola? $$ \\int 7 \\,dx $$", options: ["$$ 7 + C $$", "$$ 0 + C $$", "$$ 7x + C $$"], ans: 2 },
+            { q: "Integral especial: $$ \\int \\frac{1}{x} \\,dx = \\, ? $$", options: ["$$ x^0 + C $$", "$$ \\ln|x| + C $$", "$$ -x^{-2} + C $$"], ans: 1 },
+            { q: "En Sustitución U, si $$ u = x^3 $$, ¿cuál es du?", options: ["$$ du = x^4/4 \\,dx $$", "$$ du = 3x^2 \\,dx $$", "$$ du = 3x \\,dx $$"], ans: 1 },
+            { q: "¿Qué técnica usas para integrar $$ \\int x e^x \\,dx $$?", options: ["Sustitución Normal (U)", "Por Partes — ILATE", "Fracciones Parciales"], ans: 1 },
+            { q: "Según ILATE, en $$ \\int x \\ln(x) \\,dx $$, ¿quién es u?", options: ["$$ \\ln(x) $$ — La L va antes que la A en ILATE", "$$ x $$ — Es más fácil", "Cualquiera es igual"], ans: 0 },
+            { q: "Fracciones Parciales sirve para...", options: ["Raíces cuadradas imposibles", "Fracciones con denominadores factorizables en productos", "Integrales trigonométricas"], ans: 1 },
+            { q: "En una Integral Definida $$ \\int_a^b f(x)\\,dx $$, la respuesta final se obtiene como...", options: ["F(a) + F(b)", "F(a) - F(b)", "F(b) - F(a)"], ans: 2 },
+            { q: "Cuando una integral tiene límite $$ \\infty $$, se llama Integral Impropia y se resuelve con...", options: ["Operar ∞ como si fuera un número grande", "Un límite formal lim(t→∞) para acercarse al infinito", "Ignorar el límite superior"], ans: 1 }
+        ];
+        let quizIndex = 0, examScore = 0;
+        function loadQuizQuestion() {
+            let q = quizExamData[quizIndex];
+            document.getElementById('quizQuestion').innerHTML = q.q;
+            let opts = document.getElementById('quizOptions'); opts.innerHTML = '';
+            q.options.forEach((opt, idx) => {
+                let btn = document.createElement('button');
+                btn.innerHTML = opt; btn.style.padding = '18px'; btn.style.border = '2px solid #E2E8F0'; btn.style.borderRadius = '12px';
+                btn.style.background = 'white'; btn.style.cursor = 'pointer'; btn.style.fontSize = '1.1rem'; btn.style.textAlign = 'left';
+                btn.onmouseover = () => { if(btn.style.pointerEvents !== 'none') btn.style.borderColor = '#4F46E5'; };
+                btn.onmouseout = () => { if(btn.style.pointerEvents !== 'none') btn.style.borderColor = '#E2E8F0'; };
+                btn.onclick = function() {
+                    Array.from(opts.children).forEach(b => b.style.pointerEvents = 'none');
+                    if (idx === q.ans) { 
+                        this.style.borderColor = '#10B981'; this.style.background = '#ECFDF5'; this.style.color = '#065F46'; examScore++; 
+                    } else { 
+                        this.style.borderColor = '#EF4444'; this.style.background = '#FEF2F2'; this.style.color = '#991B1B';
+                        opts.children[q.ans].style.borderColor = '#10B981'; opts.children[q.ans].style.background = '#ECFDF5'; opts.children[q.ans].style.color = '#065F46';
+                    }
+                    let n = document.getElementById('nextQuizBtn');
+                    n.style.display = 'block'; n.innerText = (quizIndex === quizExamData.length - 1) ? "Ver Tu Calificación de Maestría 🏆" : "Siguiente Pregunta 👉";
+                };
+                opts.appendChild(btn);
+            });
+            document.getElementById('quizScoreDisplay').innerText = `Progreso: Pregunta ${quizIndex + 1} de ${quizExamData.length}`;
+            if(window.MathJax) MathJax.typesetPromise([document.getElementById('quizContainer')]);
+        }
+        function nextQuizQuestion() {
+            quizIndex++;
+            if(quizIndex < quizExamData.length) { loadQuizQuestion(); }
+            else { 
+                let perc = Math.round((examScore / quizExamData.length) * 100);
+                document.getElementById('quizContainer').innerHTML = `<h3 style="text-align:center;font-size:2.5rem; color:${perc >= 80 ? '#10B981' : '#F59E0B'}">Calificación Final: ${perc}%</h3><p style="text-align:center; font-size:1.3rem; margin-top:20px;">¡Ya lo tienes todo! Con esto dominas desde lo más básico hasta lo más aterrador (Integrales por Partes e Impropias). Eres imparable. 🚀</p><div style="text-align:center;"><button class="nav-pill" onclick="location.reload()" style="margin-top:30px; cursor:pointer; font-size:1.2rem; padding: 15px 30px;">Repasar Desde Cero 🔄</button></div>`; 
+            }
+        }
+
+        // Interactive Step-by-Step Logic (ix = interactive exercise)
+        function ixCheck(currentId, nextId, isCorrect, btn, msg) {
+            const step = document.getElementById(currentId);
+            const btns = step.querySelectorAll('.ix-btn');
+            const fb = step.querySelector('.ix-feedback');
+            btns.forEach(b => { b.style.pointerEvents = 'none'; });
+            btn.classList.add(isCorrect ? 'ok' : 'bad');
+            fb.textContent = msg;
+            fb.className = 'ix-feedback ' + (isCorrect ? 'ok' : 'bad');
+            if (isCorrect && nextId) {
+                setTimeout(() => {
+                    const next = document.getElementById(nextId);
+                    if (next) { next.classList.add('active'); next.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+                    if (window.MathJax) MathJax.typesetPromise([next]);
+                }, 600);
+            } else if (!isCorrect) {
+                setTimeout(() => {
+                    btns.forEach(b => { b.style.pointerEvents = ''; b.classList.remove('bad', 'ok'); });
+                    fb.className = 'ix-feedback';
+                }, 3500);
+            }
+        }
+
+        window.onload = () => { initMemoryGame(); loadQuizQuestion(); };
+    </script>
+</body>
+</html>
