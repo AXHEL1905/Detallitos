@@ -320,13 +320,80 @@
         .ix-feedback.ok { background:#ECFDF5; color:#065F46; display:block; }
         .ix-feedback.bad { background:#FEF2F2; color:#991B1B; display:block; }
 
+        /* ========== MOBILE RESPONSIVE ========== */
         @media (max-width: 768px) {
-            .section-card { padding: 25px; }
-            h1 { font-size: 2.5rem; }
-            .nav-scroll { flex-wrap: nowrap; justify-content: flex-start; }
-            .step-math { font-size: 1.1rem; padding: 10px 15px; }
-            td, th { padding: 10px; font-size: 1rem; }
-            .ix-opts { grid-template-columns: 1fr; }
+            h1 { font-size: 2rem; letter-spacing: -0.5px; }
+            p.subtitle { font-size: 1rem; }
+
+            header { margin: 30px 15px 20px; }
+
+            /* Nav: horizontal scroll pill bar on phone */
+            .nav-wrapper {
+                position: sticky;
+                top: 0;
+                padding: 8px 12px;
+                background: rgba(238, 242, 255, 0.92);
+                backdrop-filter: blur(8px);
+                -webkit-backdrop-filter: blur(8px);
+                border-bottom: 1px solid #C7D2FE;
+                z-index: 200;
+                margin-bottom: 0;
+            }
+            .nav-scroll {
+                flex-wrap: nowrap;
+                justify-content: flex-start;
+                gap: 8px;
+                -webkit-overflow-scrolling: touch;
+            }
+            .nav-pill {
+                font-size: 0.82rem;
+                padding: 8px 14px;
+                white-space: nowrap;
+            }
+
+            /* Cards */
+            .container { gap: 28px; padding: 0 12px; margin-bottom: 50px; }
+            .section-card { padding: 20px 16px; border-radius: 14px; }
+            .card-header { flex-direction: column; gap: 6px; padding-bottom: 12px; margin-bottom: 20px; }
+            .card-number { font-size: 1.1rem; padding: 4px 12px; }
+            .section-title { font-size: 1.5rem; }
+
+            /* Text */
+            .text-block { font-size: 1rem; }
+            .note-box { font-size: 1rem; }
+
+            /* Formulas */
+            .formula-hero { font-size: 1.1rem; padding: 18px 14px; border-radius: 12px; }
+            .step-math {
+                font-size: 1rem;
+                padding: 10px 12px;
+                display: block;
+                width: 100%;
+                overflow-x: auto;
+            }
+
+            /* Step tree */
+            .step-container { padding-left: 20px; }
+            .step::before { left: -29px; width: 12px; height: 12px; }
+            .step-title { font-size: 1.1rem; }
+
+            /* Tables: horizontal scroll on phone */
+            table { display: block; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+            td, th { padding: 10px; font-size: 0.9rem; white-space: nowrap; }
+
+            /* Interactive exercise blocks */
+            .ix-card { padding: 16px; }
+            .ix-title { font-size: 1.1rem; }
+            .ix-problem { font-size: 1rem; padding: 14px; }
+            .ix-opts { grid-template-columns: 1fr; gap: 8px; }
+            .ix-btn { font-size: 0.95rem; padding: 12px; }
+            .ix-q { font-size: 1rem; }
+        }
+
+        @media (max-width: 420px) {
+            h1 { font-size: 1.6rem; }
+            .section-title { font-size: 1.3rem; }
+            .formula-hero { font-size: 0.95rem; }
         }
     </style>
 </head>
